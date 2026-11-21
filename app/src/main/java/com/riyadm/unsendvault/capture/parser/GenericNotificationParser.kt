@@ -89,7 +89,13 @@ open class GenericNotificationParser(protected val placeholders: CapturePlacehol
         fun isSelf(name: String?) = name == null || (selfName != null && name.equals(selfName, ignoreCase = true))
 
         val otherSenders = merged.mapNotNull { m -> TextRules.cleanName(m.sender)?.takeUnless { isSelf(it) } }.distinct()
-        val conversationTitle = titleInfo.conversationTitle ?: otherSenders.firstOrNull() ?: placeholders.selfSender
+        val rawTitle = titleInfo.conversationTitle
+        val isTitleSelf = rawTitle != null && (isSelf(rawTitle) || rawTitle.equals(placeholders.selfSender, ignoreCase = true))
+        val conversationTitle = if (rawTitle != null && !isTitleSelf) {
+            rawTitle
+        } else {
+            otherSenders.firstOrNull() ?: rawTitle ?: placeholders.selfSender
+        }
         val isGroup = s.isGroupConversation || titleInfo.isGroup ||
             (TextRules.cleanTitle(s.conversationTitle) != null && otherSenders.size > 1)
         val conversationKey = ConversationKeys.of(s.shortcutId, conversationTitle, otherSenders.firstOrNull())

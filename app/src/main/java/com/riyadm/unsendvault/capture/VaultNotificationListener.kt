@@ -108,6 +108,7 @@ class VaultNotificationListener : NotificationListenerService() {
             if (snapshot != null) {
                 rt.engine.onPosted(snapshot)
                 rt.replyActionCache?.recordFromNotification(sbn, snapshot, rt.registry)
+                saveAvatar(rt, sbn, snapshot)
             }
         } catch (e: Exception) {
             CaptureLog.d("onNotificationPosted failed: ${e.javaClass.simpleName}")
@@ -169,6 +170,17 @@ class VaultNotificationListener : NotificationListenerService() {
         if (SnapshotFactory.preFilter(sbn, rt.preFilter, asIfSelected).accept) rt.onNewApp(pkg)
     }
 
+    private fun saveAvatar(rt: CaptureRuntime, sbn: StatusBarNotification, snapshot: NotificationSnapshot) {
+        val storage = rt.avatarStorage ?: return
+        try {
+            val parsed = rt.registry.parse(snapshot).outcome as? com.riyadm.unsendvault.capture.parser.ParseOutcome.Parsed ?: return
+            val keys = parsed.messages.mapTo(HashSet()) { it.conversationKey } + parsed.deletionMarkers.map { it.conversationKey }
+            val convKey = keys.singleOrNull() ?: return
+            storage.saveFromNotification(sbn, convKey)
+        } catch (_: Exception) {
+        }
+    }
+
     /**
      * Pass over what is already in the shade (after a reboot or rebind), throttled and incremental per [CatchUpPolicy],
      * through the same pre-filter and the engine's low-priority catch-up lane. Deduplicated downstream.
@@ -200,6 +212,7 @@ class VaultNotificationListener : NotificationListenerService() {
                             admit(rt, sbn)?.let { snapshot ->
                                 rt.engine.onCatchUp(snapshot)
                                 rt.replyActionCache?.recordFromNotification(sbn, snapshot, rt.registry)
+                                saveAvatar(rt, sbn, snapshot)
                                 count++
                             }
                         } catch (e: Exception) {

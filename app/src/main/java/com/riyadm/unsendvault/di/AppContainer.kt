@@ -14,6 +14,8 @@ import com.riyadm.unsendvault.data.RetentionScheduler
 import com.riyadm.unsendvault.data.SettingsRepository
 import com.riyadm.unsendvault.data.VaultRepository
 import com.riyadm.unsendvault.data.WidgetRefresher
+import com.riyadm.unsendvault.data.avatar.AvatarStorage
+import com.riyadm.unsendvault.data.read.ConversationReadTracker
 import com.riyadm.unsendvault.notify.SavedMessageNotifier
 import com.riyadm.unsendvault.notify.SavedNotificationPolicy
 import com.riyadm.unsendvault.reply.NotificationReplyGateway
@@ -60,11 +62,16 @@ class AppContainer(context: Context) {
     /** App labels, icons and launching across the user's profiles (work profile, cloned apps). */
     val appDirectory: AppDirectory by lazy { AppDirectory(this.context) }
     val widgetRefresher: WidgetRefresher by lazy { WidgetModule.createRefresher(this.context) }
+    /** Contact avatar cache for the chat screen. */
+    val avatarStorage: AvatarStorage by lazy { AvatarStorage(this.context) }
 
     /** Opt-in "messages saved" notifications. Built on the first ingest that actually stores something. */
     val savedMessageNotifier: SavedMessageNotifier by lazy {
         SavedMessageNotifier(this.context, SavedNotificationPolicy(CaptureModule.placeholders(this.context).selfSender))
     }
+
+    /** Tracks unread message counts per conversation. */
+    val readTracker: ConversationReadTracker by lazy { ConversationReadTracker(this.context) }
 
     /** In-memory cache of reply actions to allow replying after notifications are dismissed. */
     val replyActionCache: ReplyActionCache by lazy { ReplyActionCache() }

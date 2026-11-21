@@ -2,22 +2,29 @@ package com.riyadm.unsendvault.ui.home
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Lock
@@ -33,6 +40,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -40,12 +48,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -61,6 +71,7 @@ import com.riyadm.unsendvault.ui.common.rememberTimeFormatter
 import com.riyadm.unsendvault.ui.common.startFirstAvailable
 import com.riyadm.unsendvault.ui.components.AppAvatar
 import com.riyadm.unsendvault.ui.components.AppScaffold
+import com.riyadm.unsendvault.ui.components.ConversationAvatar
 import com.riyadm.unsendvault.ui.components.EmptyState
 import com.riyadm.unsendvault.ui.components.MessageRowConfig
 import com.riyadm.unsendvault.ui.components.MessageRowContent
@@ -292,37 +303,97 @@ private fun ConversationList(
 
 @Composable
 fun ConversationRow(conversation: Conversation, timeLabel: String, selected: Boolean, onClick: () -> Unit) {
-    ListItem(
-        headlineContent = { Text(conversation.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        overlineContent = { Text(conversation.appLabel, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        supportingContent = {
-            Column {
-                conversation.lastMessagePreview?.let { Text(it, maxLines = 2, overflow = TextOverflow.Ellipsis) }
-                Text(
-                    pluralStringResource(R.plurals.stats_messages, conversation.messageCount, conversation.messageCount),
-                    style = MaterialTheme.typography.labelMedium,
+    val containerColor = if (selected) {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    } else {
+        Color.Transparent
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(containerColor)
+            .selectable(selected = selected, role = Role.Button, onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Contact avatar with mini app badge
+        Box {
+            ConversationAvatar(
+                packageName = conversation.packageName,
+                conversationKey = conversation.conversationKey,
+                label = conversation.title,
+                size = 50.dp,
+            )
+            if (conversation.isGroup) {
+                Icon(
+                    Icons.Outlined.Group,
+                    contentDescription = stringResource(R.string.cd_group_conversation),
+                    modifier = Modifier.size(16.dp).align(Alignment.BottomStart),
+                    tint = MaterialTheme.colorScheme.primary,
                 )
             }
-        },
-        leadingContent = {
-            Box {
-                AppAvatar(conversation.packageName, conversation.appLabel)
-                if (conversation.isGroup) {
-                    Icon(
-                        Icons.Outlined.Group,
-                        contentDescription = stringResource(R.string.cd_group_conversation),
-                        modifier = Modifier.size(16.dp).align(Alignment.BottomEnd),
-                        tint = MaterialTheme.colorScheme.primary,
+        }
+
+        Spacer(Modifier.width(12.dp))
+
+        // Title and last message preview
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = conversation.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            val preview = conversation.lastMessagePreview
+            if (!preview.isNullOrBlank()) {
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = preview,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+
+        Spacer(Modifier.width(8.dp))
+
+        // Time and message count badge
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(
+                text = timeLabel,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (conversation.unreadCount > 0) {
+                Box(
+                    modifier = Modifier
+                        .defaultMinSize(minWidth = 22.dp, minHeight = 22.dp)
+                        .background(color = Color(0xFF1E88E5), shape = CircleShape)
+                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = if (conversation.unreadCount > 99) "99+" else conversation.unreadCount.toString(),
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
-        },
-        trailingContent = { Text(timeLabel, style = MaterialTheme.typography.labelMedium) },
-        colors = ListItemDefaults.colors(
-            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
-        ),
-        modifier = Modifier.selectable(selected = selected, role = Role.Button, onClick = onClick),
-    )
+        }
+    }
 }
 
 @Composable

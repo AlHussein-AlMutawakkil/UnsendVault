@@ -62,6 +62,7 @@ data class Conversation(
     val lastMessageAt: Long,
     val messageCount: Int,
     val lastMessagePreview: String?,
+    val unreadCount: Int = 0,
 )
 
 /** One archived message as shown in lists. */

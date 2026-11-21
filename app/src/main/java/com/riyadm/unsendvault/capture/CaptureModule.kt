@@ -12,6 +12,7 @@ import com.riyadm.unsendvault.di.AppContainer
 import com.riyadm.unsendvault.core.model.AppsToSave
 import com.riyadm.unsendvault.core.model.VaultSettings
 import com.riyadm.unsendvault.data.SettingsRepository
+import com.riyadm.unsendvault.data.avatar.AvatarStorage
 import com.riyadm.unsendvault.reply.ReplyActionCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +45,8 @@ class CaptureRuntime(
     val onNewApp: (String) -> Unit = {},
     /** Caches free-text reply actions so users can reply even after notifications are dismissed. */
     val replyActionCache: ReplyActionCache? = null,
+    /** Persists contact profile photos for the chat UI. */
+    val avatarStorage: AvatarStorage? = null,
 )
 
 /**
@@ -95,6 +98,12 @@ object CaptureModule {
             sink = object : CaptureSink {
                 override suspend fun ingest(parsed: ParsedNotification, capturedAt: Long) {
                     val result = container.vaultRepository.ingest(parsed, capturedAt)
+                    if (result.newMessages.isNotEmpty()) {
+                        val byConv = result.newMessages.groupBy { it.conversationId }
+                        for ((convId, refs) in byConv) {
+                            container.readTracker.onNewMessages(convId, refs.size)
+                        }
+                    }
                     if (result.newMessages.isEmpty() && result.possiblyDeletedIn.isEmpty()) return
                     val settings = cache.get()
                     if (settings.savedMessageNotifications) {
@@ -119,6 +128,7 @@ object CaptureModule {
             registry = registry,
             onNewApp = newApps::record,
             replyActionCache = container.replyActionCache,
+            avatarStorage = container.avatarStorage,
         )
     }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Image
@@ -66,7 +67,8 @@ fun MessageBadges(message: ArchivedMessage, modifier: Modifier = Modifier) {
     if (!hasAny) return
     FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (message.status == MessageStatus.POSSIBLY_DELETED) {
-            StatusBadge(Icons.Outlined.EventBusy, stringResource(R.string.badge_possibly_deleted), colors.tertiaryContainer, colors.onTertiaryContainer)
+            val text = message.deletionEvidence?.markerText?.takeIf { it.isNotBlank() } ?: stringResource(R.string.badge_possibly_deleted)
+            StatusBadge(Icons.Outlined.DeleteOutline, text, colors.errorContainer, colors.onErrorContainer)
         }
         if (message.revisionCount > 1) {
             StatusBadge(

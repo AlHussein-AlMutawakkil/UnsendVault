@@ -197,7 +197,7 @@ private fun NavHostController.navigateTopLevel(item: TopLevel) {
 }
 
 private fun conversationViewModel(id: Long, c: AppContainer) =
-    ConversationViewModel(id, c.vaultRepository, replyGateway = c.replyGateway)
+    ConversationViewModel(id, c.vaultRepository, replyGateway = c.replyGateway, readTracker = c.readTracker)
 
 /** Saved-message notifications: clear the chat's notification while it is open, and don't post new ones for it. */
 private fun AppContainer.onConversationVisible(id: Long, visible: Boolean) {
@@ -227,10 +227,13 @@ private fun AppNavHost(navController: NavHostController, isWide: Boolean, onLock
     ) {
         composable<HomeDest> {
             HomeRoute(
-                viewModel = containerViewModel { HomeViewModel(it.vaultRepository, it.settingsRepository, it.listenerStatus) },
+                viewModel = containerViewModel { HomeViewModel(it.vaultRepository, it.settingsRepository, it.listenerStatus, it.readTracker) },
                 isWide = isWide,
                 onOpenMessage = { navController.navigate(MessageDest(it)) },
-                onOpenConversation = { navController.navigate(ConversationDest(it)) },
+                onOpenConversation = {
+                    container.readTracker.markAsRead(it)
+                    navController.navigate(ConversationDest(it))
+                },
                 onOpenReliabilityHelp = { navController.navigate(ReliabilityDest) },
                 onLockNow = onLockNow,
                 conversationPane = { id, onClose ->

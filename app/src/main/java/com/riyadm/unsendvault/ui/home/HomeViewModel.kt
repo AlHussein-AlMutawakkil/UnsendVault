@@ -12,11 +12,13 @@ import com.riyadm.unsendvault.core.model.StartTab
 import com.riyadm.unsendvault.core.model.VaultStats
 import com.riyadm.unsendvault.data.SettingsRepository
 import com.riyadm.unsendvault.data.VaultRepository
+import com.riyadm.unsendvault.data.read.ConversationReadTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -58,6 +60,7 @@ class HomeViewModel(
     private val vault: VaultRepository,
     private val settings: SettingsRepository,
     private val listenerStatus: ListenerStatus,
+    private val readTracker: ConversationReadTracker? = null,
 ) : ViewModel() {
     /** Null until the user picks a tab: the saved start tab applies (each new launch gets a new ViewModel). */
     private val tab = MutableStateFlow<HomeTab?>(null)
@@ -73,6 +76,13 @@ class HomeViewModel(
     }
     private val recent = packageFilter.flatMapLatest { vault.observeMessages(MessageQuery(packages = it, limit = RECENT_LIMIT)) }
     private val conversations = packageFilter.flatMapLatest { vault.observeConversations(it) }
+    private val unreadMap = readTracker?.unreadCounts ?: flowOf(emptyMap())
+    private val conversationsWithUnread = combine(conversations, unreadMap) { convs, unread ->
+        convs.map { c ->
+            val count = unread[c.id] ?: 0
+            if (c.unreadCount != count) c.copy(unreadCount = count) else c
+        }
+    }
 
     private val status = combine(accessGranted, listenerStatus.connected, settings.settings) { access, connected, s ->
         captureStatusOf(access, s.captureEnabled, connected) to s.appLockEnabled
@@ -83,7 +93,7 @@ class HomeViewModel(
     private val ui = combine(effectiveTab, packageFilter, selectedConversation) { t, f, c -> Triple(t, f, c) }
 
     val state: StateFlow<HomeUiState> = combine(
-        ui, status, apps, combine(recent, conversations) { r, c -> r to c }, vault.observeStats(),
+        ui, status, apps, combine(recent, conversationsWithUnread) { r, c -> r to c }, vault.observeStats(),
     ) { (t, filter, selectedConv), (capture, lock), appList, (messages, convs), stats ->
         val known = appList.mapTo(HashSet()) { it.packageName }
         HomeUiState(
@@ -112,7 +122,12 @@ class HomeViewModel(
         tab.value = HomeTab.CONVERSATIONS
     }
 
-    fun selectConversation(id: Long?) = selectedConversation.update { id }
+    fun selectConversation(id: Long?) {
+        selectedConversation.update { id }
+        if (id != null) {
+            readTracker?.markAsRead(id)
+        }
+    }
 
     /** Notification access can only change in system settings; re-check whenever the screen resumes. */
     fun refreshAccess() {

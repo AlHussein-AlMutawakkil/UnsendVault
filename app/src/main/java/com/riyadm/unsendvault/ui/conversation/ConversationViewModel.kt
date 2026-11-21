@@ -7,6 +7,7 @@ import com.riyadm.unsendvault.core.model.ArchivedMessage
 import com.riyadm.unsendvault.core.model.Conversation
 import com.riyadm.unsendvault.core.model.MessageQuery
 import com.riyadm.unsendvault.data.VaultRepository
+import com.riyadm.unsendvault.data.read.ConversationReadTracker
 import com.riyadm.unsendvault.reply.ReplyAvailability
 import com.riyadm.unsendvault.reply.ReplyGateway
 import com.riyadm.unsendvault.reply.ReplyResult
@@ -82,7 +83,16 @@ class ConversationViewModel(
     private val vault: VaultRepository,
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val replyGateway: ReplyGateway? = null,
+    private val readTracker: ConversationReadTracker? = null,
 ) : ViewModel() {
+    init {
+        readTracker?.setVisibleConversation(conversationId)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        readTracker?.setVisibleConversation(null)
+    }
     private val selection = MutableStateFlow<Set<Long>>(emptySet())
     private val replyRefresh = MutableStateFlow(0)
     private val sending = MutableStateFlow(false)
