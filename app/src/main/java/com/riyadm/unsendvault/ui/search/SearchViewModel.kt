@@ -10,6 +10,9 @@ import com.riyadm.unsendvault.core.model.AppSummary
 import com.riyadm.unsendvault.core.model.ArchivedMessage
 import com.riyadm.unsendvault.core.model.Conversation
 import com.riyadm.unsendvault.core.model.MessageQuery
+import com.riyadm.unsendvault.core.model.VaultSettings
+import com.riyadm.unsendvault.crypto.message.MessageCryptoEngine
+import com.riyadm.unsendvault.data.SettingsRepository
 import com.riyadm.unsendvault.data.VaultRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -60,6 +63,7 @@ class SearchViewModel(
     private val vault: VaultRepository,
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val debounceMillis: Long = DEBOUNCE_MILLIS,
+    private val settings: SettingsRepository? = null,
 ) : ViewModel() {
     /** Text-field state lives in snapshot state (recommended for TextField); the flow below drives the search. */
     var query by mutableStateOf("")
@@ -80,8 +84,15 @@ class SearchViewModel(
 
     private val conversations = filters.map { it.packages }.distinctUntilChanged().flatMapLatest { vault.observeConversations(it) }
 
-    val state: StateFlow<SearchUiState> = combine(results, filters, vault.observeAppSummaries(), conversations) { (q, list), f, apps, convs ->
-        SearchUiState(q, f, list, apps, convs)
+    private val settingsFlow = settings?.settings ?: flowOf(VaultSettings())
+
+    val state: StateFlow<SearchUiState> = combine(results, filters, vault.observeAppSummaries(), conversations, settingsFlow) { (q, list), f, apps, convs, s ->
+        val filtered = if (s.showEncryptedOnly) {
+            list.filter { MessageCryptoEngine.isEncrypted(it.text) }
+        } else {
+            list
+        }
+        SearchUiState(q, f, filtered, apps, convs)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SearchUiState())
 
     fun onQueryChange(value: String) {

@@ -14,6 +14,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.riyadm.unsendvault.core.model.AppsToSave
+import com.riyadm.unsendvault.core.model.CompressionPolicy
+import com.riyadm.unsendvault.core.model.EncryptionMode
 import com.riyadm.unsendvault.core.model.StartTab
 import com.riyadm.unsendvault.core.model.ThemeMode
 import com.riyadm.unsendvault.core.model.VaultSettings
@@ -91,6 +93,13 @@ class DataStoreSettingsRepository(
         /** Comma-separated (package names never contain commas) to keep the order. */
         val newApps = stringPreferencesKey("new_apps")
         val suggestNewApps = booleanPreferencesKey("suggest_new_apps")
+
+        val globalMessageKeyEncrypted = stringPreferencesKey("global_msg_key_enc")
+        val defaultEncryptionMode = stringPreferencesKey("default_enc_mode")
+        val messageCompressionPolicy = stringPreferencesKey("msg_compression_policy")
+        val showEncryptedOnly = booleanPreferencesKey("show_encrypted_only")
+        val conversationKeysEncrypted = stringPreferencesKey("conv_keys_enc")
+        val conversationEncryptionModes = stringPreferencesKey("conv_enc_modes")
     }
 
     companion object {
@@ -124,6 +133,20 @@ class DataStoreSettingsRepository(
                 newApps = p[Keys.newApps]?.split(',')?.filter { it.isNotBlank() }?.distinct()?.takeLast(VaultSettings.MAX_NEW_APPS)
                     ?: DEFAULTS.newApps,
                 suggestNewApps = p[Keys.suggestNewApps] ?: DEFAULTS.suggestNewApps,
+                globalMessageKeyEncrypted = p[Keys.globalMessageKeyEncrypted] ?: DEFAULTS.globalMessageKeyEncrypted,
+                defaultEncryptionMode = p[Keys.defaultEncryptionMode]?.let { n -> EncryptionMode.entries.firstOrNull { it.name == n } } ?: DEFAULTS.defaultEncryptionMode,
+                messageCompressionPolicy = p[Keys.messageCompressionPolicy]?.let { n -> CompressionPolicy.entries.firstOrNull { it.name == n } } ?: DEFAULTS.messageCompressionPolicy,
+                showEncryptedOnly = p[Keys.showEncryptedOnly] ?: DEFAULTS.showEncryptedOnly,
+                conversationKeysEncrypted = p[Keys.conversationKeysEncrypted]?.split('\n')
+                    ?.mapNotNull { line ->
+                        val parts = line.split("::", limit = 2)
+                        if (parts.size == 2) parts[0] to parts[1] else null
+                    }?.toMap() ?: DEFAULTS.conversationKeysEncrypted,
+                conversationEncryptionModes = p[Keys.conversationEncryptionModes]?.split('\n')
+                    ?.mapNotNull { line ->
+                        val parts = line.split("::", limit = 2)
+                        if (parts.size == 2) parts[0] to parts[1] else null
+                    }?.toMap() ?: DEFAULTS.conversationEncryptionModes,
             )
         }
 
@@ -152,6 +175,12 @@ class DataStoreSettingsRepository(
             p[Keys.selectedPackages] = s.selectedPackages
             p[Keys.newApps] = s.newApps.filter { it.isNotBlank() && ',' !in it }.distinct().takeLast(VaultSettings.MAX_NEW_APPS).joinToString(",")
             p[Keys.suggestNewApps] = s.suggestNewApps
+            p[Keys.globalMessageKeyEncrypted] = s.globalMessageKeyEncrypted
+            p[Keys.defaultEncryptionMode] = s.defaultEncryptionMode.name
+            p[Keys.messageCompressionPolicy] = s.messageCompressionPolicy.name
+            p[Keys.showEncryptedOnly] = s.showEncryptedOnly
+            p[Keys.conversationKeysEncrypted] = s.conversationKeysEncrypted.entries.joinToString("\n") { "${it.key}::${it.value}" }
+            p[Keys.conversationEncryptionModes] = s.conversationEncryptionModes.entries.joinToString("\n") { "${it.key}::${it.value}" }
         }
     }
 }

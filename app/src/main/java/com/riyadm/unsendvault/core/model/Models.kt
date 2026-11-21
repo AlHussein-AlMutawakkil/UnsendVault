@@ -20,6 +20,16 @@ enum class ContentKind {
     FILTERED_SENSITIVE,
 }
 
+/** Message end-to-end encryption mode. */
+enum class EncryptionMode {
+    NONE, EXPLICIT, STEGANO
+}
+
+/** Compression policy before encryption. */
+enum class CompressionPolicy {
+    AUTO, ALWAYS, DISABLED
+}
+
 /** Lifecycle state of an archived message. Removal of a notification alone never changes this. */
 enum class MessageStatus {
     ACTIVE,
@@ -210,6 +220,18 @@ data class VaultSettings(
      * is recorded or shown, and the existing "new" list is cleared; unselected apps are simply dropped.
      */
     val suggestNewApps: Boolean = true,
+    /** Locally encrypted global passphrase for message encryption/decryption. */
+    val globalMessageKeyEncrypted: String = "",
+    /** Default encryption mode when sending replies. */
+    val defaultEncryptionMode: EncryptionMode = EncryptionMode.NONE,
+    /** Compression policy before encrypting outgoing messages. */
+    val messageCompressionPolicy: CompressionPolicy = CompressionPolicy.AUTO,
+    /** When enabled, only encrypted messages and conversations containing encrypted messages are shown. */
+    val showEncryptedOnly: Boolean = false,
+    /** Map of conversation key -> locally encrypted per-conversation passphrase. */
+    val conversationKeysEncrypted: Map<String, String> = emptyMap(),
+    /** Map of conversation key -> custom EncryptionMode name (NONE, EXPLICIT, STEGANO). */
+    val conversationEncryptionModes: Map<String, String> = emptyMap(),
 ) {
     /** Exclusions always apply; in selected mode the app must also be selected. */
     fun savesApp(packageName: String): Boolean =

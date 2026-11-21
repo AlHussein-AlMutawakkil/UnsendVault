@@ -10,6 +10,7 @@ import com.riyadm.unsendvault.core.model.Conversation
 import com.riyadm.unsendvault.core.model.MessageQuery
 import com.riyadm.unsendvault.core.model.StartTab
 import com.riyadm.unsendvault.core.model.VaultStats
+import com.riyadm.unsendvault.crypto.message.MessageCryptoEngine
 import com.riyadm.unsendvault.data.SettingsRepository
 import com.riyadm.unsendvault.data.VaultRepository
 import com.riyadm.unsendvault.data.read.ConversationReadTracker
@@ -54,6 +55,7 @@ data class HomeUiState(
     val stats: VaultStats? = null,
     val appLockEnabled: Boolean = false,
     val selectedConversationId: Long? = null,
+    val showEncryptedOnly: Boolean = false,
 )
 
 class HomeViewModel(
@@ -85,7 +87,7 @@ class HomeViewModel(
     }
 
     private val status = combine(accessGranted, listenerStatus.connected, settings.settings) { access, connected, s ->
-        captureStatusOf(access, s.captureEnabled, connected) to s.appLockEnabled
+        Triple(captureStatusOf(access, s.captureEnabled, connected), s.appLockEnabled, s.showEncryptedOnly)
     }
 
     private val effectiveTab = combine(tab, settings.settings) { picked, s -> picked ?: s.startTab.toHomeTab() }
@@ -94,21 +96,39 @@ class HomeViewModel(
 
     val state: StateFlow<HomeUiState> = combine(
         ui, status, apps, combine(recent, conversationsWithUnread) { r, c -> r to c }, vault.observeStats(),
-    ) { (t, filter, selectedConv), (capture, lock), appList, (messages, convs), stats ->
+    ) { (t, filter, selectedConv), (capture, lock, encOnly), appList, (messages, convs), stats ->
         val known = appList.mapTo(HashSet()) { it.packageName }
+        val displayedRecent = if (encOnly) {
+            messages.filter { MessageCryptoEngine.isEncrypted(it.text) }
+        } else {
+            messages
+        }
+        val displayedConvs = if (encOnly) {
+            val encryptedIds = messages.filter { MessageCryptoEngine.isEncrypted(it.text) }.mapTo(HashSet()) { it.conversationId }
+            convs.filter { it.id in encryptedIds || MessageCryptoEngine.isEncrypted(it.lastMessagePreview.orEmpty()) }
+        } else {
+            convs
+        }
         HomeUiState(
             loading = false,
             tab = t,
             captureStatus = capture,
             apps = appList,
             selectedPackages = filter.filterTo(LinkedHashSet()) { it in known },
-            recent = messages,
-            conversations = convs,
+            recent = displayedRecent,
+            conversations = displayedConvs,
             stats = stats,
             appLockEnabled = lock,
             selectedConversationId = selectedConv?.takeIf { id -> convs.any { it.id == id } },
+            showEncryptedOnly = encOnly,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState(tab = settings.current.startTab.toHomeTab()))
+
+    fun toggleShowEncryptedOnly() {
+        viewModelScope.launch {
+            settings.update { it.copy(showEncryptedOnly = !it.showEncryptedOnly) }
+        }
+    }
 
     fun selectTab(value: HomeTab) = tab.update { value }
 

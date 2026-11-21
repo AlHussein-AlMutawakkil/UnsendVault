@@ -197,7 +197,14 @@ private fun NavHostController.navigateTopLevel(item: TopLevel) {
 }
 
 private fun conversationViewModel(id: Long, c: AppContainer) =
-    ConversationViewModel(id, c.vaultRepository, replyGateway = c.replyGateway, readTracker = c.readTracker)
+    ConversationViewModel(
+        conversationId = id,
+        vault = c.vaultRepository,
+        replyGateway = c.replyGateway,
+        readTracker = c.readTracker,
+        userMessageKeyManager = c.userMessageKeyManager,
+        settingsRepository = c.settingsRepository,
+    )
 
 /** Saved-message notifications: clear the chat's notification while it is open, and don't post new ones for it. */
 private fun AppContainer.onConversationVisible(id: Long, visible: Boolean) {
@@ -212,6 +219,7 @@ private fun settingsViewModelFactory(c: AppContainer) = SettingsViewModel(
     installedApps = PackageManagerAppsSource(c.context, c.appDirectory),
     demoDataInserter = if (BuildConfig.DEBUG) ({ DemoData.insert(c.vaultRepository) }) else null,
     cancelSavedNotifications = { c.savedMessageNotifier.cancelAll() },
+    keyManager = c.userMessageKeyManager,
 )
 
 @Composable
@@ -251,7 +259,7 @@ private fun AppNavHost(navController: NavHostController, isWide: Boolean, onLock
             )
         }
         composable<SearchDest> {
-            SearchRoute(containerViewModel { SearchViewModel(it.vaultRepository) }) { navController.navigate(MessageDest(it)) }
+            SearchRoute(containerViewModel { SearchViewModel(it.vaultRepository, settings = it.settingsRepository) }) { navController.navigate(MessageDest(it)) }
         }
         composable<FavoritesDest> {
             FavoritesRoute(containerViewModel { FavoritesViewModel(it.vaultRepository) }) { navController.navigate(MessageDest(it)) }
@@ -283,7 +291,7 @@ private fun AppNavHost(navController: NavHostController, isWide: Boolean, onLock
         composable<MessageDest> { backStackEntry ->
             val back = rememberBack(navController)
             val id = backStackEntry.toRoute<MessageDest>().id
-            MessageDetailRoute(containerViewModel { MessageDetailViewModel(id, it.vaultRepository) }) { back() }
+            MessageDetailRoute(containerViewModel { MessageDetailViewModel(id, it.vaultRepository, it.userMessageKeyManager) }) { back() }
         }
         composable<ExclusionsDest> {
             val back = rememberBack(navController)

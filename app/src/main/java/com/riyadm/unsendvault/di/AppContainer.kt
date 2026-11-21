@@ -16,6 +16,7 @@ import com.riyadm.unsendvault.data.VaultRepository
 import com.riyadm.unsendvault.data.WidgetRefresher
 import com.riyadm.unsendvault.data.avatar.AvatarStorage
 import com.riyadm.unsendvault.data.read.ConversationReadTracker
+import com.riyadm.unsendvault.crypto.message.UserMessageKeyManager
 import com.riyadm.unsendvault.notify.SavedMessageNotifier
 import com.riyadm.unsendvault.notify.SavedNotificationPolicy
 import com.riyadm.unsendvault.reply.NotificationReplyGateway
@@ -72,6 +73,9 @@ class AppContainer(context: Context) {
 
     /** Tracks unread message counts per conversation. */
     val readTracker: ConversationReadTracker by lazy { ConversationReadTracker(this.context) }
+
+    /** Manages encrypted message passphrases (global and per-conversation). */
+    val userMessageKeyManager: UserMessageKeyManager by lazy { UserMessageKeyManager(settingsRepository) }
 
     /** In-memory cache of reply actions to allow replying after notifications are dismissed. */
     val replyActionCache: ReplyActionCache by lazy { ReplyActionCache() }

@@ -7,9 +7,12 @@ import com.riyadm.unsendvault.apps.ProfileKind
 import com.riyadm.unsendvault.capture.adapter.KnownApps
 import com.riyadm.unsendvault.core.model.AppsToSave
 import com.riyadm.unsendvault.core.model.AppSummary
+import com.riyadm.unsendvault.core.model.CompressionPolicy
+import com.riyadm.unsendvault.core.model.EncryptionMode
 import com.riyadm.unsendvault.core.model.StartTab
 import com.riyadm.unsendvault.core.model.ThemeMode
 import com.riyadm.unsendvault.core.model.VaultSettings
+import com.riyadm.unsendvault.crypto.message.UserMessageKeyManager
 import com.riyadm.unsendvault.data.RetentionScheduler
 import com.riyadm.unsendvault.data.SettingsRepository
 import com.riyadm.unsendvault.data.VaultRepository
@@ -49,6 +52,8 @@ data class SettingsUiState(
     val busy: Boolean = false,
     /** Labels of listed packages that have no launcher entry (selected, "new" or excluded apps). */
     val otherLabels: Map<String, String> = emptyMap(),
+    /** Decrypted global passphrase for UI display. */
+    val globalMessageKey: String = "",
 ) {
     /** Archive apps first (they matter most), then other launcher apps; excluded apps always included. */
     val exclusionCandidates: List<ExclusionCandidate>
@@ -99,6 +104,7 @@ class SettingsViewModel(
     private val demoDataInserter: (suspend () -> Int)? = null,
     /** Removes posted saved-message notifications (feature off, content hidden, app lock on, all data deleted). */
     private val cancelSavedNotifications: () -> Unit = {},
+    private val keyManager: UserMessageKeyManager = UserMessageKeyManager(settingsRepository),
 ) : ViewModel() {
     private val launcherApps = MutableStateFlow<List<InstalledApp>?>(null)
     private val busy = MutableStateFlow(false)
@@ -109,8 +115,21 @@ class SettingsViewModel(
 
     val state: StateFlow<SettingsUiState> = combine(
         settingsRepository.settings, vault.observeAppSummaries(), launcherApps, busy, otherLabels,
-    ) { s, apps, launcher, isBusy, labels -> SettingsUiState(s, apps, launcher, isBusy, labels) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
+    ) { s, apps, launcher, isBusy, labels ->
+        val globalKey = keyManager.getGlobalKey()
+        SettingsUiState(s, apps, launcher, isBusy, labels, globalKey)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
+
+    fun setGlobalMessageKey(key: String) {
+        viewModelScope.launch {
+            keyManager.setGlobalKey(key)
+        }
+    }
+
+    fun setDefaultEncryptionMode(mode: EncryptionMode) = update { it.copy(defaultEncryptionMode = mode) }
+    fun setMessageCompressionPolicy(policy: CompressionPolicy) = update { it.copy(messageCompressionPolicy = policy) }
+    fun setShowEncryptedOnly(enabled: Boolean) = update { it.copy(showEncryptedOnly = enabled) }
+    fun generateGlobalKey(): String = keyManager.generateStrongKey()
 
     /** Resolves names for listed packages without a launcher entry, once each (only while the app list is open). */
     private fun resolveOtherLabels(settings: VaultSettings, launcher: List<InstalledApp>) {

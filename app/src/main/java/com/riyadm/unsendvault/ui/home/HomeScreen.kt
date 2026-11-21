@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -111,6 +112,7 @@ fun HomeRoute(
         onReconnect = viewModel::reconnect,
         onReliabilityHelp = onOpenReliabilityHelp,
         onLockNow = onLockNow,
+        onToggleEncryptedOnly = viewModel::toggleShowEncryptedOnly,
         conversationPane = { id -> conversationPane(id) { viewModel.selectConversation(null) } },
     )
 }
@@ -130,12 +132,20 @@ fun HomeScreen(
     onReconnect: () -> Unit,
     onReliabilityHelp: () -> Unit,
     onLockNow: () -> Unit,
+    onToggleEncryptedOnly: () -> Unit = {},
     conversationPane: @Composable (Long) -> Unit = {},
 ) {
     val formatter = rememberTimeFormatter()
     AppScaffold(
         title = stringResource(R.string.home_title),
         actions = {
+            IconButton(onClick = onToggleEncryptedOnly) {
+                Icon(
+                    imageVector = if (state.showEncryptedOnly) Icons.Filled.Lock else Icons.Outlined.Lock,
+                    contentDescription = "عرض الرسائل المشفرة فقط",
+                    tint = if (state.showEncryptedOnly) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             if (state.appLockEnabled) {
                 IconButton(onClick = onLockNow) {
                     Icon(Icons.Filled.Lock, contentDescription = stringResource(R.string.action_lock_now))

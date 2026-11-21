@@ -23,6 +23,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Article
+import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.Backup
 import androidx.compose.material.icons.outlined.BatteryAlert
@@ -33,6 +37,7 @@ import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.Key
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PauseCircle
@@ -43,10 +48,16 @@ import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.Tab
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.Translate
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material.icons.outlined.Widgets
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -77,6 +88,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riyadm.unsendvault.R
 import com.riyadm.unsendvault.core.model.AppsToSave
+import com.riyadm.unsendvault.core.model.CompressionPolicy
+import com.riyadm.unsendvault.core.model.EncryptionMode
 import com.riyadm.unsendvault.core.model.StartTab
 import com.riyadm.unsendvault.core.model.ThemeMode
 import com.riyadm.unsendvault.core.model.VaultSettings
@@ -113,7 +126,7 @@ object SettingsTestTags {
     const val SUGGEST_NEW_APPS = "settings_suggest_new_apps"
 }
 
-private enum class SettingsDialog { NONE, APPS_TO_SAVE, RETENTION, TIMEOUT, THEME, LANGUAGE, START_TAB, REMINDER, DELETE_ALL }
+private enum class SettingsDialog { NONE, APPS_TO_SAVE, RETENTION, TIMEOUT, THEME, LANGUAGE, START_TAB, REMINDER, DELETE_ALL, GLOBAL_KEY, DEFAULT_ENCRYPTION_MODE, MESSAGE_COMPRESSION }
 
 @Composable
 fun SettingsRoute(
@@ -364,6 +377,42 @@ fun SettingsScreen(
                     onClick = { dialog = SettingsDialog.TIMEOUT },
                 )
 
+                // Message Encryption
+                SectionHeader("تشفير وأمان الرسائل")
+                ValueRow(
+                    title = "المفتاح العام للتطبيق",
+                    value = if (state.globalMessageKey.isBlank()) "لم يُعيّن مفتاح (انقر للتعيين)" else "•••••••• (${state.globalMessageKey.length} حرف)",
+                    icon = Icons.Outlined.Key,
+                    onClick = { dialog = SettingsDialog.GLOBAL_KEY },
+                )
+                ValueRow(
+                    title = "وضع التشفير الافتراضي",
+                    value = when (s.defaultEncryptionMode) {
+                        EncryptionMode.NONE -> "بدون تشفير"
+                        EncryptionMode.EXPLICIT -> "التشفير الصريح (رموز واضحة)"
+                        EncryptionMode.STEGANO -> "التشفير المموّه (جملة طبيعية)"
+                    },
+                    icon = Icons.Outlined.Shield,
+                    onClick = { dialog = SettingsDialog.DEFAULT_ENCRYPTION_MODE },
+                )
+                ValueRow(
+                    title = "ضغط الرسائل قبل التشفير",
+                    value = when (s.messageCompressionPolicy) {
+                        CompressionPolicy.AUTO -> "تلقائي (الافتراضي)"
+                        CompressionPolicy.ALWAYS -> "مفعّل دائماً"
+                        CompressionPolicy.DISABLED -> "معطّل"
+                    },
+                    icon = Icons.Outlined.Tune,
+                    onClick = { dialog = SettingsDialog.MESSAGE_COMPRESSION },
+                )
+                SwitchRow(
+                    title = "عرض الرسائل المشفرة فقط",
+                    summary = "إخفاء الرسائل العادية وإظهار المحادثات والرسائل المشفرة فقط",
+                    checked = s.showEncryptedOnly,
+                    onCheckedChange = viewModel::setShowEncryptedOnly,
+                    icon = Icons.Outlined.Lock,
+                )
+
                 // Appearance
                 SectionHeader(stringResource(R.string.settings_section_appearance))
                 ValueRow(
@@ -469,7 +518,7 @@ fun SettingsScreen(
             }
         }
 
-        SettingsDialogs(dialog, s, viewModel, onDismiss = { dialog = SettingsDialog.NONE })
+        SettingsDialogs(dialog, s, state, viewModel, onDismiss = { dialog = SettingsDialog.NONE })
     }
 
     if (backupState.exportDialogOpen) {
@@ -498,7 +547,13 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun SettingsDialogs(dialog: SettingsDialog, s: VaultSettings, viewModel: SettingsViewModel, onDismiss: () -> Unit) {
+private fun SettingsDialogs(
+    dialog: SettingsDialog,
+    s: VaultSettings,
+    state: SettingsUiState,
+    viewModel: SettingsViewModel,
+    onDismiss: () -> Unit,
+) {
     when (dialog) {
         SettingsDialog.NONE -> Unit
         SettingsDialog.RETENTION -> ChoiceDialog(
@@ -591,7 +646,134 @@ private fun SettingsDialogs(dialog: SettingsDialog, s: VaultSettings, viewModel:
             },
             onDismiss = onDismiss,
         )
+        SettingsDialog.DEFAULT_ENCRYPTION_MODE -> ChoiceDialog(
+            title = "وضع التشفير الافتراضي",
+            options = EncryptionMode.entries,
+            selected = s.defaultEncryptionMode,
+            label = {
+                when (it) {
+                    EncryptionMode.NONE -> "بدون تشفير"
+                    EncryptionMode.EXPLICIT -> "التشفير الصريح (رموز واضحة)"
+                    EncryptionMode.STEGANO -> "التشفير المموّه (جملة طبيعية)"
+                }
+            },
+            onSelect = {
+                viewModel.setDefaultEncryptionMode(it)
+                onDismiss()
+            },
+            onDismiss = onDismiss,
+        )
+        SettingsDialog.MESSAGE_COMPRESSION -> ChoiceDialog(
+            title = "ضغط الرسائل قبل التشفير",
+            options = CompressionPolicy.entries,
+            selected = s.messageCompressionPolicy,
+            label = {
+                when (it) {
+                    CompressionPolicy.AUTO -> "تلقائي (الافتراضي)"
+                    CompressionPolicy.ALWAYS -> "مفعّل دائماً"
+                    CompressionPolicy.DISABLED -> "معطّل"
+                }
+            },
+            onSelect = {
+                viewModel.setMessageCompressionPolicy(it)
+                onDismiss()
+            },
+            onDismiss = onDismiss,
+        )
+        SettingsDialog.GLOBAL_KEY -> GlobalKeyDialog(
+            currentKey = state.globalMessageKey,
+            onSave = {
+                viewModel.setGlobalMessageKey(it)
+                onDismiss()
+            },
+            onGenerate = { viewModel.generateGlobalKey() },
+            onDismiss = onDismiss,
+        )
     }
+}
+
+@Composable
+private fun GlobalKeyDialog(
+    currentKey: String,
+    onSave: (String) -> Unit,
+    onGenerate: () -> String,
+    onDismiss: () -> Unit,
+) {
+    var keyText by remember(currentKey) { mutableStateOf(currentKey) }
+    var passwordVisible by remember { mutableStateOf(false) }
+    val clipboardManager = LocalClipboardManager.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("المفتاح العام للتطبيق") },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = "يُستخدم هذا المفتاح تلقائياً لجميع المحادثات التي لا تملك مفتاحاً خاصاً بها.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                OutlinedTextField(
+                    value = keyText,
+                    onValueChange = { keyText = it },
+                    label = { Text("المفتاح العام (كلمة مرور أو عبارة)") },
+                    singleLine = true,
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                                contentDescription = if (passwordVisible) "إخفاء" else "إظهار",
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    TextButton(
+                        onClick = {
+                            keyText = onGenerate()
+                        },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Icon(Icons.Filled.AutoFixHigh, contentDescription = null)
+                        Spacer(Modifier.width(4.dp))
+                        Text("توليد عشوائي")
+                    }
+                    if (keyText.isNotBlank()) {
+                        TextButton(
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(keyText))
+                            },
+                        ) {
+                            Icon(Icons.Filled.ContentCopy, contentDescription = null)
+                            Spacer(Modifier.width(4.dp))
+                            Text("نسخ")
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onSave(keyText.trim())
+                },
+            ) {
+                Text("حفظ")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+    )
 }
 
 @Composable

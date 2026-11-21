@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.StarBorder
@@ -148,7 +149,7 @@ fun MessageDetailScreen(
         actions = {
             if (detail != null) {
                 val message = detail.message
-                val body = messageBodyText(message)
+                val body = state.decryptedText ?: messageBodyText(message)
                 IconToggleButton(
                     checked = message.isFavorite,
                     onCheckedChange = { onToggleFavorite() },
@@ -186,7 +187,7 @@ fun MessageDetailScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                MessageDetailContent(detail, formatter, Modifier.widthIn(max = 720.dp).padding(16.dp))
+                MessageDetailContent(detail, state, formatter, Modifier.widthIn(max = 720.dp).padding(16.dp))
             }
         }
     }
@@ -207,7 +208,7 @@ fun MessageDetailScreen(
 }
 
 @Composable
-private fun MessageDetailContent(detail: MessageDetail, formatter: TimeFormatter, modifier: Modifier = Modifier) {
+private fun MessageDetailContent(detail: MessageDetail, state: MessageDetailUiState, formatter: TimeFormatter, modifier: Modifier = Modifier) {
     val message = detail.message
     val colors = MaterialTheme.colorScheme
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -226,6 +227,20 @@ private fun MessageDetailContent(detail: MessageDetail, formatter: TimeFormatter
                     style = MaterialTheme.typography.bodyMedium,
                     color = colors.onSurfaceVariant,
                 )
+            }
+        }
+
+        if (state.isEncrypted) {
+            InfoCard(
+                icon = Icons.Outlined.Lock,
+                title = if (state.decryptedText != null) "رسالة مشفرة (تم فك تشفيرها)" else "رسالة مشفرة (المفتاح غير متطابق أو غير محدد)",
+                container = if (state.decryptedText != null) colors.primaryContainer else colors.errorContainer,
+                content = if (state.decryptedText != null) colors.onPrimaryContainer else colors.onErrorContainer,
+                modifier = Modifier.testTag("detail_encrypted"),
+            ) {
+                if (state.coverText != null) {
+                    Text("النص الظاهر بالخارج: \"${state.coverText}\"", style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
 
@@ -257,7 +272,7 @@ private fun MessageDetailContent(detail: MessageDetail, formatter: TimeFormatter
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SelectionContainer {
                     Text(
-                        messageBodyText(message),
+                        state.decryptedText ?: messageBodyText(message),
                         style = MaterialTheme.typography.bodyLarge,
                         fontStyle = if (message.contentKind == ContentKind.TEXT) FontStyle.Normal else FontStyle.Italic,
                         modifier = Modifier.testTag(DetailTestTags.TEXT),
