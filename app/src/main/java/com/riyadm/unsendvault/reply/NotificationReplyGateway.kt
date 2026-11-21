@@ -18,15 +18,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * [ReplyGateway] on the bound [VaultNotificationListener]. Nothing is tracked on the capture path: when the user opens
- * a chat (or presses Send) this reads that one app's active notifications, keeps those with a free-text reply action,
- * and parses them with the same adapters as capture to find the one that belongs to exactly this chat. A notification
- * that mixes several chats (e.g. a bundled summary) is never used, so a reply can't go to the wrong person.
+ * [ReplyGateway] on the bound [VaultNotificationListener] with fallback to [ReplyActionCache].
+ *
+ * When the user opens a chat (or presses Send), this first checks active notifications in the status bar for a free-text
+ * reply action matching this chat. If the notification was dismissed or cleared, it falls back to the most recent cached
+ * reply action recorded for this conversation, allowing replies without needing the notification to stay in the status bar.
+ * A notification that mixes several chats (e.g. a bundled summary) is never used, so a reply can't go to the wrong person.
  */
 class NotificationReplyGateway(
     context: Context,
     private val registry: () -> AdapterRegistry,
     private val activeNotifications: (String) -> List<StatusBarNotification>? = VaultNotificationListener::activeNotificationsOf,
+    private val cache: ReplyActionCache = ReplyActionCache(),
 ) : ReplyGateway {
     private val context = context.applicationContext
 
@@ -46,6 +49,7 @@ class NotificationReplyGateway(
             ReplyActions.send(context, found.action, body)
             ReplyResult.SENT
         } catch (e: PendingIntent.CanceledException) {
+            cache.remove(packageName, conversationKey)
             ReplyResult.UNAVAILABLE
         } catch (e: RuntimeException) {
             CaptureLog.d("reply failed: ${e.javaClass.simpleName}")
@@ -60,20 +64,31 @@ class NotificationReplyGateway(
     }
 
     private fun find(packageName: String, conversationKey: String): Lookup {
-        val active = activeNotifications(packageName) ?: return Lookup.ListenerOff
+        val active = activeNotifications(packageName)
         val adapters = registry()
         val match = active
-            .asSequence()
-            .filter { it.notification?.flags?.and(Notification.FLAG_GROUP_SUMMARY) == 0 }
-            .mapNotNull { sbn ->
+            ?.asSequence()
+            ?.filter { it.notification?.flags?.and(Notification.FLAG_GROUP_SUMMARY) == 0 }
+            ?.mapNotNull { sbn ->
                 val action = ReplyActions.replyAction(sbn.notification) ?: return@mapNotNull null
                 val snapshot = SnapshotFactory.fromStatusBarNotification(sbn, context.packageName) ?: return@mapNotNull null
                 val parsed = adapters.parse(snapshot).outcome as? ParseOutcome.Parsed ?: return@mapNotNull null
                 val keys = parsed.messages.mapTo(HashSet()) { it.conversationKey } + parsed.deletionMarkers.map { it.conversationKey }
                 if (keys.singleOrNull() == conversationKey) sbn.postTime to action else null
             }
-            .maxByOrNull { it.first }
-        return match?.let { Lookup.Found(it.second) } ?: Lookup.None
+            ?.maxByOrNull { it.first }
+
+        if (match != null) {
+            cache.record(packageName, conversationKey, match.second, match.first)
+            return Lookup.Found(match.second)
+        }
+
+        val cached = cache.get(packageName, conversationKey)
+        if (cached != null) {
+            return Lookup.Found(cached.action)
+        }
+
+        return if (active == null) Lookup.ListenerOff else Lookup.None
     }
 }
 

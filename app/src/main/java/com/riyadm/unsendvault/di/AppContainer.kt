@@ -17,6 +17,7 @@ import com.riyadm.unsendvault.data.WidgetRefresher
 import com.riyadm.unsendvault.notify.SavedMessageNotifier
 import com.riyadm.unsendvault.notify.SavedNotificationPolicy
 import com.riyadm.unsendvault.reply.NotificationReplyGateway
+import com.riyadm.unsendvault.reply.ReplyActionCache
 import com.riyadm.unsendvault.reply.ReplyGateway
 import com.riyadm.unsendvault.update.UpdateController
 import com.riyadm.unsendvault.update.UpdateModule
@@ -65,8 +66,17 @@ class AppContainer(context: Context) {
         SavedMessageNotifier(this.context, SavedNotificationPolicy(CaptureModule.placeholders(this.context).selfSender))
     }
 
+    /** In-memory cache of reply actions to allow replying after notifications are dismissed. */
+    val replyActionCache: ReplyActionCache by lazy { ReplyActionCache() }
+
     /** Reply through a chat app's own notification reply action. UI only. */
-    val replyGateway: ReplyGateway by lazy { NotificationReplyGateway(this.context, registry = { capture.registry }) }
+    val replyGateway: ReplyGateway by lazy {
+        NotificationReplyGateway(
+            context = this.context,
+            registry = { capture.registry },
+            cache = replyActionCache,
+        )
+    }
 
     /** Opt-in update check. UI only: never touched by capture, widgets or workers. */
     val updateController: UpdateController by lazy { UpdateModule.createController(this.context, appScope) }

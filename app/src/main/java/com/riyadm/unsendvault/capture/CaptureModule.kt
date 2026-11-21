@@ -12,6 +12,7 @@ import com.riyadm.unsendvault.di.AppContainer
 import com.riyadm.unsendvault.core.model.AppsToSave
 import com.riyadm.unsendvault.core.model.VaultSettings
 import com.riyadm.unsendvault.data.SettingsRepository
+import com.riyadm.unsendvault.reply.ReplyActionCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,6 +42,8 @@ class CaptureRuntime(
     val registry: AdapterRegistry,
     /** Records an unselected app that sent a chat-style notification ("New" in Selected apps). Returns immediately. */
     val onNewApp: (String) -> Unit = {},
+    /** Caches free-text reply actions so users can reply even after notifications are dismissed. */
+    val replyActionCache: ReplyActionCache? = null,
 )
 
 /**
@@ -109,7 +112,14 @@ object CaptureModule {
             ownPackage = context.packageName,
         )
         val newApps = NewAppRecorder(container.appScope) { container.settingsRepository }
-        return CaptureRuntime(engine, CapturePreFilter(registry, context.packageName), cache, registry, newApps::record)
+        return CaptureRuntime(
+            engine = engine,
+            preFilter = CapturePreFilter(registry, context.packageName),
+            settings = cache,
+            registry = registry,
+            onNewApp = newApps::record,
+            replyActionCache = container.replyActionCache,
+        )
     }
 
     fun createPauseController(context: Context): CapturePauseController =

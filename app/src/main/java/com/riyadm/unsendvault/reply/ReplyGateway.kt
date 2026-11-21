@@ -2,9 +2,9 @@ package com.riyadm.unsendvault.reply
 
 /**
  * Sends a reply through the chat app's *own* notification reply action (the same RemoteInput an Android Auto / Wear OS
- * reply uses). UnsendVault never talks to any messaging server. A reply is possible only while that app's notification
- * for the chat is still showing: once it is dismissed or the chat is read, the app withdraws the action and there is
- * nothing to send through.
+ * reply uses). UnsendVault never talks to any messaging server. A reply is possible while that app's notification
+ * for the chat is showing, or via a cached reply action if the notification was dismissed (until the source app cancels
+ * the underlying PendingIntent).
  */
 interface ReplyGateway {
     suspend fun availability(packageName: String, conversationKey: String): ReplyAvailability
@@ -14,10 +14,10 @@ interface ReplyGateway {
 }
 
 enum class ReplyAvailability {
-    /** The chat's notification is showing and offers a free-text reply action. */
+    /** An active or cached free-text reply action is available for this chat. */
     AVAILABLE,
 
-    /** No showing notification for this chat offers a reply (dismissed, read, or the app has no reply action). */
+    /** No active or cached notification action for this chat offers a reply (or the app has no reply action). */
     NO_NOTIFICATION,
 
     /** UnsendVault's listener isn't connected (capture paused or Notification Access off), so it can't see notifications. */

@@ -104,7 +104,11 @@ class VaultNotificationListener : NotificationListenerService() {
         val rt = runtime ?: return
         CaptureTrace.begin("UV:onPosted")
         try {
-            admit(rt, sbn)?.let(rt.engine::onPosted)
+            val snapshot = admit(rt, sbn)
+            if (snapshot != null) {
+                rt.engine.onPosted(snapshot)
+                rt.replyActionCache?.recordFromNotification(sbn, snapshot, rt.registry)
+            }
         } catch (e: Exception) {
             CaptureLog.d("onNotificationPosted failed: ${e.javaClass.simpleName}")
         } finally {
@@ -193,8 +197,9 @@ class VaultNotificationListener : NotificationListenerService() {
                     for (sbn in active) {
                         try {
                             if (sbn == null || sbn.postTime < decision.minPostTime) continue
-                            admit(rt, sbn)?.let {
-                                rt.engine.onCatchUp(it)
+                            admit(rt, sbn)?.let { snapshot ->
+                                rt.engine.onCatchUp(snapshot)
+                                rt.replyActionCache?.recordFromNotification(sbn, snapshot, rt.registry)
                                 count++
                             }
                         } catch (e: Exception) {
@@ -210,7 +215,7 @@ class VaultNotificationListener : NotificationListenerService() {
 
     override fun dump(fd: FileDescriptor?, writer: PrintWriter?, args: Array<out String>?) {
         if (writer == null) return
-        writer.println("connected=${ListenerConnectionState.connected.value} bound=${bound === this}")
+        writer.println("connected=${ListenerConnectionState.connected.value} bound=${bound === this} replyActionsCached=${runtime?.replyActionCache?.size ?: 0}")
         CaptureStats.dump(writer)
     }
 

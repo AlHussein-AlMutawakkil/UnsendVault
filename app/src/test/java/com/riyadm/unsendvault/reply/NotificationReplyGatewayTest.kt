@@ -67,7 +67,8 @@ class NotificationReplyGatewayTest {
         return parsed.messages.map { it.conversationKey }.distinct().single()
     }
 
-    private fun gateway(active: List<StatusBarNotification>?) = NotificationReplyGateway(context, { registry }, { active })
+    private fun gateway(active: List<StatusBarNotification>?, cache: ReplyActionCache = ReplyActionCache()) =
+        NotificationReplyGateway(context, { registry }, { active }, cache)
 
     @Test
     fun replyAction_prefersSemanticReply_andNeedsFreeFormInput() {
@@ -115,6 +116,64 @@ class NotificationReplyGatewayTest {
         assertEquals("on my way", results!!.getCharSequence(RESULT_KEY).toString())
         assertEquals(RemoteInput.SOURCE_FREE_FORM_INPUT, RemoteInput.getResultsSource(sent))
         assertEquals(1, sent.getIntExtra(EXTRA_CODE, -1)) // Alex's action, not Sam's (2)
+    }
+
+    @Test
+    fun availability_andSend_workWithCachedAction_whenActiveNotificationIsDismissed() = runBlocking {
+        val alex = sbn(chat("Alex", "hi", replyAction(10)))
+        val cache = ReplyActionCache()
+        // Notification is posted and active
+        val gActive = gateway(listOf(alex), cache)
+        assertEquals(ReplyAvailability.AVAILABLE, gActive.availability(PKG, keyOf(alex)))
+
+        // User dismisses the notification: active notifications list is now empty!
+        val gDismissed = gateway(emptyList(), cache)
+        assertEquals(ReplyAvailability.AVAILABLE, gDismissed.availability(PKG, keyOf(alex)))
+
+        // User can still reply through the cached action
+        assertEquals(ReplyResult.SENT, gDismissed.send(PKG, keyOf(alex), "replied after dismissal"))
+
+        val sent = shadowOf(context as Application).broadcastIntents.last { it.action == ACTION_REPLY }
+        val results = RemoteInput.getResultsFromIntent(sent)
+        assertNotNull(results)
+        assertEquals("replied after dismissal", results!!.getCharSequence(RESULT_KEY).toString())
+        assertEquals(10, sent.getIntExtra(EXTRA_CODE, -1))
+    }
+
+    @Test
+    fun recordFromNotification_populatesCache_allowingReplyWithoutPriorActiveLookup() = runBlocking {
+        val sam = sbn(chat("Sam", "hey", replyAction(20)))
+        val cache = ReplyActionCache()
+        val snap = SnapshotFactory.fromStatusBarNotification(sam, context.packageName)!!
+        cache.recordFromNotification(sam, snap, registry)
+
+        // Active notifications list is empty, but cache has Sam's action
+        val g = gateway(emptyList(), cache)
+        assertEquals(ReplyAvailability.AVAILABLE, g.availability(PKG, keyOf(sam)))
+        assertEquals(ReplyResult.SENT, g.send(PKG, keyOf(sam), "direct from cache"))
+    }
+
+    @Test
+    fun send_removesCachedAction_whenPendingIntentIsCanceled() = runBlocking {
+        val intent = replyIntent(30)
+        val action = NotificationCompat.Action.Builder(0, "Reply", intent)
+            .addRemoteInput(CompatRemoteInput.Builder(RESULT_KEY).setLabel("Reply").build())
+            .setSemanticAction(NotificationCompat.Action.SEMANTIC_ACTION_REPLY)
+            .build()
+        val alex = sbn(chat("Alex", "hi", action))
+        val cache = ReplyActionCache()
+
+        val gActive = gateway(listOf(alex), cache)
+        assertEquals(ReplyAvailability.AVAILABLE, gActive.availability(PKG, keyOf(alex)))
+
+        // Cancel the PendingIntent and dismiss notification
+        intent.cancel()
+        val gDismissed = gateway(emptyList(), cache)
+        val result = gDismissed.send(PKG, keyOf(alex), "will fail")
+
+        assertEquals(ReplyResult.UNAVAILABLE, result)
+        // Cache entry is removed, so availability now reports NO_NOTIFICATION
+        assertEquals(ReplyAvailability.NO_NOTIFICATION, gDismissed.availability(PKG, keyOf(alex)))
     }
 
     companion object {
