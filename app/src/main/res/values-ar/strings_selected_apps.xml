@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_apps_to_save">التطبيقات المراد حفظها</string>
+    <string name="apps_to_save_all">جميع تطبيقات المراسلة</string>
+    <string name="apps_to_save_selected">التطبيقات المحددة فقط</string>
+    <string name="apps_to_save_footer">جميع تطبيقات المراسلة: يُحفظ أي تطبيق تبدو إشعاراته كرسائل محادثة، باستثناء التطبيقات المستثناة. التطبيقات المحددة فقط: لا يُقرأ أي تطبيق آخر إطلاقاً؛ وتظهر التطبيقات التي ترسل إشعارات مراسلة كـ \"جديدة\" لتتمكن من إضافتها.</string>
+    <string name="settings_selected_apps">التطبيقات المحددة</string>
+    <plurals name="selected_apps_count">
+        <item quantity="zero">لم يتم تحديد أي تطبيق</item>
+        <item quantity="one">تم تحديد تطبيق واحد</item>
+        <item quantity="two">تم تحديد تطبيقين</item>
+        <item quantity="few">تم تحديد %d تطبيقات</item>
+        <item quantity="many">تم تحديد %d تطبيقاً</item>
+        <item quantity="other">تم تحديد %d تطبيق</item>
+    </plurals>
+    <plurals name="selected_apps_count_with_new">
+        <item quantity="zero">تم تحديد %1$d تطبيق · %2$d جديد</item>
+        <item quantity="one">تم تحديد تطبيق واحد · %2$d جديد</item>
+        <item quantity="two">تم تحديد تطبيقين · %2$d جديد</item>
+        <item quantity="few">تم تحديد %1$d تطبيقات · %2$d جديد</item>
+        <item quantity="many">تم تحديد %1$d تطبيقاً · %2$d جديد</item>
+        <item quantity="other">تم تحديد %1$d تطبيق · %2$d جديد</item>
+    </plurals>
+    <string name="selected_apps_explainer">يتم حفظ التطبيقات المحددة فقط؛ ويتم تجاهل إشعارات أي تطبيق آخر فوراً قبل قراءتها.</string>
+    <string name="selected_apps_profiles_note">تحديد تطبيق يشمل أيضاً نسخه في ملف العمل والملفات الشخصية الأخرى.</string>
+    <string name="selected_apps_new">جديد</string>
+    <string name="settings_suggest_new_apps">اقتراح تطبيقات جديدة</string>
+    <string name="settings_suggest_new_apps_summary">عرض التطبيقات التي ترسل إشعارات محادثة وغير محددة كـ \"جديد\" في أعلى قائمة التطبيقات المحددة لإضافتها بسهولة. عند التعطيل: يتم تجاهلها دون إدراجها.</string>
+    <string name="selected_apps_state_saved">محفوظ</string>
+    <string name="selected_apps_state_not_saved">غير محفوظ</string>
+</resources>

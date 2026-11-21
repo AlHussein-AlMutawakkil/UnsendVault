@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Capture layer strings. Placeholders are written into stored message text at capture time. -->
+<resources>
+    <string name="capture_self_sender">أنت</string>
+    <string name="capture_placeholder_system_redacted">محتوى مخفي بواسطة أندرويد</string>
+    <string name="capture_placeholder_otp">رمز تحقق مخفي بواسطة UnsendVault</string>
+    <string name="capture_placeholder_sensitive">محتوى حساس مخفي بواسطة UnsendVault</string>
+    <string name="capture_media_photo">📷 صورة</string>
+    <string name="capture_media_video">🎥 فيديو</string>
+    <string name="capture_media_audio">🎤 مقطع صوتي</string>
+    <string name="capture_media_attachment">📎 ملف مرفق</string>
+</resources>

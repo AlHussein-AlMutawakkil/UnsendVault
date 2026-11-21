@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- UI layer strings in Arabic. -->
+<resources>
+    <!-- Navigation -->
+    <string name="nav_archive">الأرشيف</string>
+    <string name="nav_search">البحث</string>
+    <string name="nav_favorites">المفضلة</string>
+    <string name="nav_settings">الإعدادات</string>
+
+    <!-- Common actions -->
+    <string name="action_apply">تطبيق</string>
+    <string name="action_back">رجوع</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_clear">مسح</string>
+    <string name="action_clear_search">مسح البحث</string>
+    <string name="action_clear_selection">إلغاء التحديد</string>
+    <string name="action_close">إغلاق</string>
+    <string name="action_continue">متابعة</string>
+    <string name="action_copy">نسخ النص</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_delete_conversation">حذف المحادثة</string>
+    <string name="action_delete_everything">حذف كل شيء</string>
+    <string name="action_delete_selected">حذف الرسائل المحددة</string>
+    <string name="action_grant_notification_access">منح إذن الوصول إلى الإشعارات</string>
+    <string name="action_keep">الاحتفاظ</string>
+    <string name="action_lock_now">قفل الآن</string>
+    <string name="action_not_now">ليس الآن</string>
+    <string name="action_ok">حسناً</string>
+    <string name="action_reconnect">إعادة الاتصال</string>
+    <string name="action_reliability_help">مساعدة الموثوقية</string>
+    <string name="action_remove_favorite">إزالة من المفضلة</string>
+    <string name="action_resume_capture">استئناف الالتقاط</string>
+    <string name="action_select">تحديد</string>
+    <string name="action_select_all">تحديد الكل</string>
+    <string name="action_share">مشاركة النص</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">رجوع للخلف</string>
+    <string name="cd_favorite">مفضلة</string>
+    <string name="cd_group_conversation">محادثة جماعية</string>
+    <string name="cd_more_options">المزيد من الخيارات</string>
+
+    <!-- Badges and content kinds -->
+    <string name="badge_possibly_deleted">احتمال الحذف</string>
+    <string name="badge_media">الوسائط غير محفوظة</string>
+    <string name="badge_hidden_by_android">مخفي بواسطة أندرويد</string>
+    <string name="badge_filtered">مخفي بواسطة الفلتر</string>
+    <plurals name="badge_versions">
+        <item quantity="zero">لا توجد نسخ</item>
+        <item quantity="one">نسخة واحدة (%d)</item>
+        <item quantity="two">نسختان (%d)</item>
+        <item quantity="few">%d نسخ</item>
+        <item quantity="many">%d نسخة</item>
+        <item quantity="other">%d نسخة</item>
+    </plurals>
+    <string name="kind_media_short">رسالة وسائط (غير محفوظة)</string>
+    <string name="kind_redacted_short">محتوى مخفي بواسطة أندرويد</string>
+    <string name="kind_filtered_short">مخفي بواسطة فلتر المحتوى الحساس لديك</string>
+    <string name="kind_media_title">عنصر وسائط نائب</string>
+    <string name="kind_media_body">أظهر التطبيق عنصراً نائباً لصورة أو مقطع فيديو أو رسالة صوتية أو ملصق أو ملف. يحفظ UnsendVault المعاينات النصية فقط؛ ولا يتم تنزيل الوسائط أو تخزينها مطلقاً.</string>
+    <string name="kind_redacted_title">مخفي بواسطة أندرويد</string>
+    <string name="kind_redacted_body">حجب أندرويد هذا المحتوى عن UnsendVault. يخفي أندرويد 15 والإصدارات الأحدث رموز التحقق ومحتويات الإشعارات الحساسة الأخرى عن خدمات الاستماع غير الموثوقة من قِبل النظام، ويمكن لأندرويد 17 حجب محتوى الرسائل عن الخدمات غير المدرجة في القائمة البيضاء للنظام. لا يمكن لـ UnsendVault رؤية أو استعادة ما يخفيه أندرويد.</string>
+    <string name="kind_filtered_title">مخفي بواسطة فلتر المحتوى الحساس</string>
+    <string name="kind_filtered_body">استبدل UnsendVault هذا النص قبل حفظه لأنه يشبه رمز تحقق لمرة واحدة أو بيانات حساسة أخرى (رقم بطاقة، حساب بنكي IBAN، كلمة مرور). لم يتم تخزين النص الأصلي أبداً. يمكنك تغيير هذا من الإعدادات ← الخصوصية.</string>
+
+    <!-- Stats -->
+    <plurals name="stats_messages">
+        <item quantity="zero">لا توجد رسائل</item>
+        <item quantity="one">رسالة واحدة (%d)</item>
+        <item quantity="two">رسالتان (%d)</item>
+        <item quantity="few">%d رسائل</item>
+        <item quantity="many">%d رسالة</item>
+        <item quantity="other">%d رسالة</item>
+    </plurals>
+    <plurals name="stats_conversations">
+        <item quantity="zero">لا توجد محادثات</item>
+        <item quantity="one">محادثة واحدة (%d)</item>
+        <item quantity="two">محادثتان (%d)</item>
+        <item quantity="few">%d محادثات</item>
+        <item quantity="many">%d محادثة</item>
+        <item quantity="other">%d محادثة</item>
+    </plurals>
+
+    <!-- App lock -->
+    <string name="lock_title">UnsendVault مقفل</string>
+    <string name="lock_body">يظل أرشيفك مخفياً حتى تؤكد هويتك.</string>
+    <string name="lock_unlock">إلغاء القفل</string>
+    <string name="lock_prompt_title">إلغاء قفل UnsendVault</string>
+    <string name="lock_prompt_subtitle">استخدم بصمة الإصبع أو الوجه أو رمز PIN أو النمط أو كلمة المرور</string>
+    <string name="lock_error_title">تعذر التحقق</string>
+    <string name="lock_error_generic">فشل التحقق، يرجى المحاولة مجدداً.</string>
+    <string name="lock_no_credential_title">قم بإعداد قفل الشاشة أولاً</string>
+    <string name="lock_no_credential_body">لا يحتوي هذا الجهاز على قفل شاشة (PIN أو نمط أو كلمة مرور)، لذا لا يوجد وسيلة للتحقق منك. قم بإعداد قفل الشاشة لمتابعة استخدام قفل التطبيق، أو قم بإيقاف تشغيله.</string>
+    <string name="lock_no_credential_enable_body">يستخدم قفل التطبيق قفل شاشة جهازك (PIN أو نمط أو كلمة مرور، بالإضافة إلى بصمة الإصبع أو الوجه إن وُجدت). لا يحتوي هذا الجهاز على قفل شاشة بعد.</string>
+    <string name="lock_open_security_settings">فتح إعدادات الأمان</string>
+    <string name="lock_turn_off_and_continue">إيقاف قفل التطبيق والمتابعة</string>
+    <string name="lock_check_again">لقد قمت بإعداد قفل الشاشة</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_progress">الخطوة %1$d من %2$d</string>
+    <string name="onboarding_welcome_title">احتفظ بنسخة خاصة من معاينات الرسائل</string>
+    <string name="onboarding_welcome_body">يحفظ UnsendVault نص الرسائل الذي يعرضه أندرويد في إشعاراتك، لتتمكن من قراءته لاحقاً حتى لو قام المرسل بحذف أو سحب الرسالة.</string>
+    <string-array name="onboarding_welcome_points">
+        <item>يعمل مع تطبيقات المراسلة مثل WhatsApp وTelegram وMessenger وInstagram عبر إشعاراتها.</item>
+        <item>يعرض التعديلات كسجل تحديثات ويميز الرسائل التي أبلغ التطبيق نفسه عن حذفها بوضوح.</item>
+        <item>بحث، مفضلة، استثناء لكل تطبيق، وحذف تلقائي للأقدم.</item>
+    </string-array>
+    <string name="onboarding_limits_title">ما يمكنه وما لا يمكنه فعله</string>
+    <string name="onboarding_limits_body">لا يتصل UnsendVault بأي خوادم مراسلة ولا يمكنه استعادة أي شيء من الخوادم. يرى فقط ما يعرضه أندرويد في الإشعارات.</string>
+    <string-array name="onboarding_limits_points">
+        <item>لا يتم حفظ أي شيء قبل منح إذن الوصول إلى الإشعارات أو أثناء إيقاف الالتقاط مؤقتاً.</item>
+        <item>المحادثات المكتومة، أو المعاينات المخفية، أو المحادثات المفتوحة على شاشتك عند وصول الرسالة لا تصدر إشعاراً، وبالتالي لا تُحفظ.</item>
+        <item>لا تُحفظ الصور ومقاطع الفيديو والرسائل الصوتية والملفات أبداً؛ يُحفظ النص النائب فقط.</item>
+        <item>قد يحجب أندرويد المحتوى: يحجب أندرويد 15+ رموز التحقق، ويمكن لأندرويد 17 حجب نصوص الرسائل.</item>
+        <item>الرسائل الطويلة قد يتم اختصارها وقصها بواسطة نظام الإشعارات نفسه.</item>
+    </string-array>
+    <string name="onboarding_privacy_title">خصوصية تامة بالتصميم</string>
+    <string name="onboarding_privacy_body">لا يغادر أرشيفك هذا الجهاز أبداً إلا إذا قمت بتصديره بنفسك.</string>
+    <string-array name="onboarding_privacy_points">
+        <item>الاستخدام الوحيد للإنترنت هو للتحقق الاختياري من التحديثات، وهو معطل حتى تسمح به، ولا يرسل أي بيانات من أرشيفك مطلقاً.</item>
+        <item>نصوص الرسائل والأسماء وعناوين المحادثات مشفرة بمفتاح محمي بواسطة Android Keystore.</item>
+        <item>يتم استبعاد رموز التحقق لمرة واحدة والنصوص الحساسة الأخرى قبل الحفظ (يمكنك تعديل ذلك).</item>
+        <item>يمكنك استثناء تطبيقات، وحذف الرسائل القديمة تلقائياً، أو حذف كل شيء في أي وقت.</item>
+    </string-array>
+    <string name="onboarding_access_title">السماح بالوصول إلى الإشعارات</string>
+    <string name="onboarding_access_body">سيفتح أندرويد شاشة إذن الوصول إلى الإشعارات. قم بتفعيل UnsendVault هناك، ثم عد إلى هنا.</string>
+    <string-array name="onboarding_access_points">
+        <item>سيحذر أندرويد من أن التطبيق يمكنه قراءة جميع الإشعارات. هذه هي طريقة عمل UnsendVault؛ وهو يتجاهل التطبيقات التي ليست للمراسلة وأي تطبيق تستثنيه.</item>
+        <item>يمكنك إيقاف إذن الوصول في أي وقت من إعدادات النظام.</item>
+    </string-array>
+    <string name="onboarding_access_granted">تم تفعيل إذن الوصول إلى الإشعارات. الالتقاط جاهز.</string>
+    <string name="onboarding_access_not_granted">إذن الوصول إلى الإشعارات متوقف. لن يتم حفظ أي شيء بعد.</string>
+    <string name="onboarding_access_review">فتح إعدادات الوصول إلى الإشعارات</string>
+    <string name="onboarding_skip_for_now">تخطي الآن</string>
+    <string name="onboarding_lock_title">اختياري: قفل التطبيق</string>
+    <string name="onboarding_lock_body">اطلب بصمة الإصبع أو الوجه أو قفل الشاشة لفتح UnsendVault. يُنصح به إذا كان آخرون يستخدمون هاتفك.</string>
+    <string name="onboarding_lock_later">يمكنك تغيير هذا لاحقاً من الإعدادات ← الأمان.</string>
+    <string name="onboarding_finish">بدء استخدام UnsendVault</string>
+
+    <!-- Home -->
+    <string name="home_title">UnsendVault</string>
+    <string name="home_tab_recent">الحديثة</string>
+    <string name="home_tab_conversations">المحادثات</string>
+    <string name="home_tab_apps">التطبيقات</string>
+    <string name="filter_all_apps">جميع التطبيقات</string>
+    <string name="home_empty_title">لا توجد رسائل بعد</string>
+    <string name="home_empty_body">ستظهر معاينات الرسائل الجديدة هنا بمجرد وصول إشعاراتها. لا يمكن إضافة الرسائل التي تم استلامها قبل تفعيل الالتقاط.</string>
+    <string name="home_empty_no_access_title">لم يتم حفظ أي شيء بعد</string>
+    <string name="home_empty_no_access_body">امنح إذن الوصول إلى الإشعارات لبدء حفظ معاينات الرسائل من الآن فصاعداً.</string>
+    <string name="home_empty_filtered_title">لا يوجد شيء من هذه التطبيقات</string>
+    <string name="home_empty_filtered_body">جرب تحديد تطبيقات أخرى أو مسح الفلتر.</string>
+    <string name="home_pick_conversation_title">اختر محادثة</string>
+    <string name="home_pick_conversation_body">حدد محادثة من القائمة لقراءتها هنا.</string>
+
+    <!-- Capture status card -->
+    <string name="status_no_access_title">الالتقاط متوقف: لا يوجد إذن وصول للإشعارات</string>
+    <string name="status_no_access_body">لا يمكن لـ UnsendVault حفظ معاينات الرسائل إلا بعد السماح بإذن الوصول إلى الإشعارات.</string>
+    <string name="status_paused_title">الالتقاط متوقف مؤقتاً</string>
+    <string name="status_paused_body">يتم تجاهل الإشعارات الجديدة حتى تستأنف. إذن الوصول إلى الإشعارات لا يزال ممنوحاً.</string>
+    <string name="status_disconnected_title">الالتقاط غير متصل</string>
+    <string name="status_disconnected_body">تم منح الإذن، لكن أندرويد لم يقم بربط خدمة استماع إشعارات UnsendVault. قد يحدث هذا بعد التحديث أو عندما يوقف النظام تطبيقات الخلفية.</string>
+    <string name="status_active_title">الالتقاط نشط</string>
+    <string name="status_active_body">جارٍ حفظ معاينات الرسائل التي يعرضها أندرويد في الإشعارات.</string>
+
+    <!-- Conversation -->
+    <string name="conversation_empty_title">لم تتبق أي رسائل</string>
+    <string name="conversation_empty_body">تم حذف جميع رسائل هذه المحادثة من أرشيفك.</string>
+    <plurals name="selected_count">
+        <item quantity="zero">لم يُحدد شيء</item>
+        <item quantity="one">تم تحديد عنصر واحد (%d)</item>
+        <item quantity="two">تم تحديد عنصرين (%d)</item>
+        <item quantity="few">تم تحديد %d عناصر</item>
+        <item quantity="many">تم تحديد %d عنصراً</item>
+        <item quantity="other">تم تحديد %d عنصر</item>
+    </plurals>
+    <plurals name="messages_deleted">
+        <item quantity="zero">لم تُحذف أي رسالة</item>
+        <item quantity="one">تم حذف رسالة واحدة (%d)</item>
+        <item quantity="two">تم حذف رسالتين (%d)</item>
+        <item quantity="few">تم حذف %d رسائل</item>
+        <item quantity="many">تم حذف %d رسالة</item>
+        <item quantity="other">تم حذف %d رسالة</item>
+    </plurals>
+    <plurals name="delete_messages_title">
+        <item quantity="zero">حذف الرسائل؟</item>
+        <item quantity="one">حذف رسالة واحدة (%d)؟</item>
+        <item quantity="two">حذف رسالتين (%d)؟</item>
+        <item quantity="few">حذف %d رسائل؟</item>
+        <item quantity="many">حذف %d رسالة؟</item>
+        <item quantity="other">حذف %d رسالة؟</item>
+    </plurals>
+    <string name="delete_message_title">حذف هذه الرسالة؟</string>
+    <string name="delete_messages_body">سيؤدي هذا إلى إزالتها من أرشيف UnsendVault فقط، ولن يؤثر على تطبيق المراسلة الأصلي.</string>
+    <string name="delete_conversation_title">حذف المحادثة؟</string>
+    <string name="delete_conversation_body">ستتم إزالة جميع الرسائل المؤرشفة من “%1$s” من UnsendVault. لن يتأثر تطبيق المراسلة الأصلي.</string>
+
+    <!-- Message detail -->
+    <string name="detail_title">الرسالة</string>
+    <string name="detail_in_conversation">في %1$s · %2$s</string>
+    <string name="detail_possibly_deleted_title">احتمال حذفها أو سحبها</string>
+    <string name="detail_evidence">عرض %1$s عبارة “%2$s” لهذه الرسالة في %3$s.</string>
+    <string name="detail_evidence_missing">أبلغ %1$s عن حذف هذه الرسالة، لكن لم يتم تخزين تفاصيل.</string>
+    <string name="detail_evidence_explainer">يميز UnsendVault الرسالة بهذه الطريقة فقط عندما يعرض التطبيق نفسه إشعار حذف لها. لا يمكنه التحقق من خوادم التطبيق، لذا اعتبر ذلك إشارة قوية وليس دليلاً قاطعاً.</string>
+    <string name="detail_section_details">التفاصيل</string>
+    <string name="detail_message_time">وقت الرسالة (من التطبيق)</string>
+    <string name="detail_captured_at">حُفظت أول مرة في UnsendVault</string>
+    <string name="detail_last_updated">آخر تحديث</string>
+    <string name="detail_conversation">المحادثة</string>
+    <string name="detail_app">التطبيق</string>
+    <string name="detail_times_explainer">وقت الرسالة هو الوقت الذي أرفقه التطبيق بالإشعار؛ ووقت الحفظ هو وقت استلام UnsendVault لها. قد يختلفان في حال تأخر الإشعار.</string>
+    <string name="detail_removal_title">تمت إزالة الإشعار</string>
+    <string name="detail_removal_not_deletion">هذا لا يعني أن الرسالة قد حُذفت. تقوم التطبيقات بمسح الإشعارات تلقائياً، مثلاً عند قراءة المحادثة على جهاز آخر.</string>
+    <string name="detail_unknown_time">وقت غير معروف</string>
+    <string name="removal_app_cancelled">تم مسح الإشعار بواسطة %1$s في %2$s.</string>
+    <string name="removal_user_dismissed">قمت بسحب الإشعار وإغلاقه في %1$s.</string>
+    <string name="removal_clicked">قمت بفتح الإشعار في %1$s.</string>
+    <string name="removal_timeout">انتهت صلاحية الإشعار في %1$s.</string>
+    <string name="removal_other">تمت إزالة الإشعار في %1$s.</string>
+    <string name="detail_history_title">سجل التحديثات</string>
+    <string name="detail_history_explainer">قام التطبيق بتحديث هذا الإشعار بنص مختلف. يتم الاحتفاظ بالإصدارات السابقة هنا.</string>
+    <string name="detail_history_current">الحالي</string>
+    <string name="detail_history_earlier">نسخة سابقة</string>
+    <string name="detail_preview_note">محفوظة من معاينة الإشعار. قد تحتوي المحادثة الأصلية على نص أطول مما عرضه الإشعار.</string>
+    <string name="detail_missing_title">الرسالة غير موجودة</string>
+    <string name="detail_missing_body">هذه الرسالة لم تعد موجودة في أرشيفك.</string>
+    <string name="detail_copied">تم النسخ</string>
+    <string name="detail_clip_label">رسالة مؤرشفة</string>
+    <string name="detail_share_title">مشاركة نص الرسالة</string>
+
+    <!-- Search -->
+    <string name="search_title">البحث</string>
+    <string name="search_hint">ابحث في الرسائل، الأشخاص، المحادثات</string>
+    <string name="search_filter_conversation">المحادثة</string>
+    <string name="search_any_conversation">أي محادثة</string>
+    <string name="search_filter_dates">التواريخ</string>
+    <string name="search_filter_favorites">المفضلة</string>
+    <string name="search_filter_possibly_deleted">احتمال الحذف</string>
+    <string name="search_clear_filters">مسح الفلاتر</string>
+    <string name="search_start_title">ابحث في أرشيفك</string>
+    <string name="search_start_body">ابحث في نصوص الرسائل والمرسلين وأسماء المحادثات، أو استخدم الفلاتر. يتم البحث محلياً على هذا الجهاز فقط.</string>
+    <string name="search_no_results_title">لا توجد نتائج مطابقة</string>
+    <string name="search_no_results_body">جرب كلمات أقل أو قم بإزالة أحد الفلاتر.</string>
+    <plurals name="search_result_count">
+        <item quantity="zero">لا توجد نتائج</item>
+        <item quantity="one">نتيجة واحدة (%d)</item>
+        <item quantity="two">نتيجتان (%d)</item>
+        <item quantity="few">%d نتائج</item>
+        <item quantity="many">%d نتيجة</item>
+        <item quantity="other">%d نتيجة</item>
+    </plurals>
+
+    <!-- Favorites -->
+    <string name="favorites_title">المفضلة</string>
+    <string name="favorites_empty_title">لا توجد مفضلات بعد</string>
+    <string name="favorites_empty_body">افتح أي رسالة واضغط على النجمة للاحتفاظ بها هنا. لا يتم حذف المفضلة أبداً عبر ميزة الحذف التلقائي.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_section_capture">الالتقاط</string>
+    <string name="settings_section_retention">التخزين</string>
+    <string name="settings_section_privacy">الخصوصية</string>
+    <string name="settings_section_security">الأمان</string>
+    <string name="settings_section_appearance">المظهر واللغة</string>
+    <string name="settings_section_backup">النسخ الاحتياطي</string>
+    <string name="settings_section_data">البيانات</string>
+    <string name="settings_section_help">المساعدة</string>
+    <string name="settings_section_developer">خيارات المطور (نسخ التطوير فقط)</string>
+    <string name="settings_capture_enabled">التقاط الرسائل الجديدة</string>
+    <string name="settings_capture_enabled_on">مفعّل. قم بالتعطيل للإيقاف المؤقت دون إلغاء إذن الوصول.</string>
+    <string name="settings_capture_enabled_off">متوقف مؤقتاً. يتم تجاهل الإشعارات الجديدة.</string>
+    <string name="settings_messages_only">الرسائل فقط</string>
+    <string name="settings_messages_only_summary">حفظ الإشعارات التي تبدو كرسائل محادثة فقط. قم بالتعطيل للاحتفاظ أيضاً بنصوص إشعارات التطبيقات الأخرى.</string>
+    <string name="settings_excluded_apps">التطبيقات المستثناة</string>
+    <string name="settings_excluded_none">لا توجد تطبيقات مستثناة</string>
+    <plurals name="settings_excluded_count">
+        <item quantity="zero">لا توجد تطبيقات مستثناة</item>
+        <item quantity="one">تطبيق واحد مستثنى</item>
+        <item quantity="two">تطبيقان مستثنيان</item>
+        <item quantity="few">%d تطبيقات مستثناة</item>
+        <item quantity="many">%d تطبيقاً مستثنى</item>
+        <item quantity="other">%d تطبيق مستثنى</item>
+    </plurals>
+    <string name="settings_notification_access">الوصول إلى الإشعارات</string>
+    <string name="settings_notification_access_summary">مراجعة أو إلغاء إذن الوصول في إعدادات النظام</string>
+    <string name="settings_retention">الحذف التلقائي</string>
+    <string name="retention_off">معطل (الاحتفاظ بالرسائل حتى تحذفها بنفسك)</string>
+    <plurals name="retention_days">
+        <item quantity="zero">حذف الرسائل</item>
+        <item quantity="one">حذف الرسائل الأقدم من يوم واحد</item>
+        <item quantity="two">حذف الرسائل الأقدم من يومين</item>
+        <item quantity="few">حذف الرسائل الأقدم من %d أيام</item>
+        <item quantity="many">حذف الرسائل الأقدم من %d يوماً</item>
+        <item quantity="other">حذف الرسائل الأقدم من %d يوم</item>
+    </plurals>
+    <string name="settings_retention_favorites_note">لا يتم حذف الرسائل المفضلة تلقائياً أبداً.</string>
+    <string name="settings_run_cleanup">تشغيل التنظيف الآن</string>
+    <string name="settings_run_cleanup_summary">تطبيق قاعدة الحذف التلقائي على الفور</string>
+    <plurals name="cleanup_finished">
+        <item quantity="zero">لم تتم إزالة أي رسالة</item>
+        <item quantity="one">أزال التنظيف رسالة واحدة (%d)</item>
+        <item quantity="two">أزال التنظيف رسالتين (%d)</item>
+        <item quantity="few">أزال التنظيف %d رسائل</item>
+        <item quantity="many">أزال التنظيف %d رسالة</item>
+        <item quantity="other">أزال التنظيف %d رسالة</item>
+    </plurals>
+    <string name="settings_filter_otp">إخفاء رموز التحقق لمرة واحدة</string>
+    <string name="settings_filter_otp_summary">استبدال رموز التحقق ورموز OTP بنص نائب قبل الحفظ</string>
+    <string name="settings_filter_sensitive">إخفاء البيانات الحساسة الأخرى</string>
+    <string name="settings_filter_sensitive_summary">استبدال أرقام البطاقات وحسابات IBAN وكلمات المرور بنص نائب قبل الحفظ</string>
+    <string name="settings_secure_screen">حماية الشاشة</string>
+    <string name="settings_secure_screen_summary">حظر لقطات وتسجيل الشاشة، وإخفاء محتوى التطبيق في قائمة التطبيقات الحديثة</string>
+    <string name="settings_widget_content">إظهار نص الرسائل في الويدجت</string>
+    <string name="settings_widget_content_summary">عند التعطيل، تعرض عناصر الويدجت الأعداد فقط</string>
+    <string name="settings_widget_content_locked">غير متوفر أثناء تفعيل قفل التطبيق: تعرض الويدجت الأعداد فقط لمنع ظهور المحتوى المقفل على الشاشة الرئيسية</string>
+    <string name="settings_app_lock">قفل التطبيق</string>
+    <string name="settings_app_lock_summary">طلب بصمة الإصبع أو الوجه أو قفل الشاشة لفتح UnsendVault</string>
+    <string name="settings_lock_timeout">القفل بعد مغادرة التطبيق</string>
+    <string name="timeout_immediately">فوراً</string>
+    <plurals name="timeout_seconds">
+        <item quantity="zero">فوراً</item>
+        <item quantity="one">بعد ثانية واحدة</item>
+        <item quantity="two">بعد ثانيتين</item>
+        <item quantity="few">بعد %d ثوانٍ</item>
+        <item quantity="many">بعد %d ثانية</item>
+        <item quantity="other">بعد %d ثانية</item>
+    </plurals>
+    <plurals name="timeout_minutes">
+        <item quantity="zero">فوراً</item>
+        <item quantity="one">بعد دقيقة واحدة</item>
+        <item quantity="two">بعد دقيقتين</item>
+        <item quantity="few">بعد %d دقائق</item>
+        <item quantity="many">بعد %d دقيقة</item>
+        <item quantity="other">بعد %d دقيقة</item>
+    </plurals>
+    <string name="settings_language">اللغة</string>
+    <string name="language_system">الافتراضي للنظام</string>
+    <string name="language_en">English</string>
+    <string name="language_ar">العربية</string>
+    <string name="settings_theme">السمة</string>
+    <string name="theme_system">تلقائي حسب النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="settings_amoled">السمة الداكنة بشاشة سوداء تماماً (AMOLED)</string>
+    <string name="settings_amoled_summary">استخدام خلفيات سوداء نقية في السمة الداكنة (يوفر استهلاك الطاقة في شاشات OLED)</string>
+    <string name="settings_dynamic_color">الألوان الديناميكية</string>
+    <string name="settings_dynamic_color_summary">استخدام ألوان مستخرجة من خلفية الشاشة</string>
+    <string name="settings_dynamic_color_unsupported">يتطلب أندرويد 12 أو أحدث</string>
+    <string name="settings_delete_all">حذف جميع الرسائل المؤرشفة</string>
+    <string name="settings_delete_all_summary">إزالة جميع الرسائل والمحادثات نهائياً مع الإبقاء على الإعدادات.</string>
+    <string name="settings_delete_all_confirm_title">حذف أرشيفك بالكامل؟</string>
+    <string name="settings_delete_all_confirm_body">سيتم حذف كل رسالة ومحادثة ومفضلة محفوظة نهائياً من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء. قم بتصدير نسخة احتياطية أولاً إذا كنت قد تحتاج إليها لاحقاً.</string>
+    <string name="settings_all_deleted">تم حذف الأرشيف</string>
+    <string name="settings_demo_data">إدراج بيانات تجريبية وهمية</string>
+    <string name="settings_demo_data_summary">إضافة محادثات وهمية تغطي مختلف حالات الرسائل</string>
+    <plurals name="demo_inserted">
+        <item quantity="zero">لم يتم إدراج أي رسالة تجريبية</item>
+        <item quantity="one">تم إدراج رسالة تجريبية واحدة (%d)</item>
+        <item quantity="two">تم إدراج رسالتين تجريبيتين (%d)</item>
+        <item quantity="few">تم إدراج %d رسائل تجريبية</item>
+        <item quantity="many">تم إدراج %d رسالة تجريبية</item>
+        <item quantity="other">تم إدراج %d رسالة تجريبية</item>
+    </plurals>
+
+    <!-- Exclusions -->
+    <string name="exclusions_explainer">يتم تجاهل إشعارات التطبيقات المستثناة فوراً قبل قراءتها. تظهر التطبيقات التي استلمت منها رسائل أولاً.</string>
+    <string name="exclusions_filter_hint">البحث عن تطبيق</string>
+    <string name="exclusions_state_excluded">مستثنى</string>
+    <string name="exclusions_state_captured">يتم التقاطه</string>
+    <string name="exclusions_delete_title">حذف الرسائل من %1$s أيضاً؟</string>
+    <plurals name="exclusions_delete_body">
+        <item quantity="zero">لا توجد رسائل من %2$s في أرشيفك.</item>
+        <item quantity="one">يحتوي أرشيفك على رسالة واحدة من %2$s. هل تريد حذفها أيضاً أم الاحتفاظ بها؟</item>
+        <item quantity="two">يحتوي أرشيفك على رسالتين من %2$s. هل تريد حذفهما أيضاً أم الاحتفاظ بهما؟</item>
+        <item quantity="few">يحتوي أرشيفك على %1$d رسائل من %2$s. هل تريد حذفها أيضاً أم الاحتفاظ بها؟</item>
+        <item quantity="many">يحتوي أرشيفك على %1$d رسالة من %2$s. هل تريد حذفها أيضاً أم الاحتفاظ بها؟</item>
+        <item quantity="other">يحتوي أرشيفك على %1$d رسالة من %2$s. هل تريد حذفها أيضاً أم الاحتفاظ بها؟</item>
+    </plurals>
+    <string name="exclusions_data_deleted">تم حذف الرسائل المؤرشفة من %1$s</string>
+
+    <!-- Backup -->
+    <string name="backup_export">تصدير نسخة احتياطية مشفرة</string>
+    <string name="backup_import">استيراد نسخة احتياطية</string>
+    <string name="backup_import_summary">الاستعادة من ملف نسخة احتياطية</string>
+    <string name="backup_last_export">آخر تصدير: %1$s</string>
+    <string name="backup_never_exported">لم يتم التصدير من قبل</string>
+    <string name="backup_reminder">تذكير بالنسخ الاحتياطي</string>
+    <string name="reminder_off">معطل</string>
+    <plurals name="reminder_days">
+        <item quantity="zero">بدون تذكير</item>
+        <item quantity="one">تذكيري بعد يوم واحد بدون نسخة احتياطية</item>
+        <item quantity="two">تذكيري بعد يومين بدون نسخة احتياطية</item>
+        <item quantity="few">تذكيري بعد %d أيام بدون نسخة احتياطية</item>
+        <item quantity="many">تذكيري بعد %d يوماً بدون نسخة احتياطية</item>
+        <item quantity="other">تذكيري بعد %d يوم بدون نسخة احتياطية</item>
+    </plurals>
+    <string name="backup_explainer">تم تعطيل النسخ الاحتياطي السحابي لنظام أندرويد لـ UnsendVault لأن مفتاح الأرشيف لا يغادر هذا الجهاز أبداً. التصدير المشفر هو الطريقة الوحيدة لنقل أرشيفك أو الاحتفاظ به.</string>
+    <string name="backup_export_dialog_title">حماية نسختك الاحتياطية</string>
+    <string name="backup_export_dialog_body">اختر كلمة مرور لملف النسخة الاحتياطية هذا. ستحتاج إليها لاستيراد النسخة؛ ولا يمكن استعادتها إذا نسيتها.</string>
+    <string name="backup_password">كلمة المرور</string>
+    <string name="backup_password_confirm">تأكيد كلمة المرور</string>
+    <string name="backup_choose_location">اختيار الموقع</string>
+    <plurals name="password_too_short">
+        <item quantity="zero">كلمة المرور قصيرة جداً.</item>
+        <item quantity="one">استخدم حرفاً واحداً (%d) على الأقل.</item>
+        <item quantity="two">استخدم حرفين (%d) على الأقل.</item>
+        <item quantity="few">استخدم %d أحرف على الأقل.</item>
+        <item quantity="many">استخدم %d حرفاً على الأقل.</item>
+        <item quantity="other">استخدم %d حرف على الأقل.</item>
+    </plurals>
+    <string name="password_mismatch">كلمتا المرور غير متطابقتين.</string>
+    <string name="password_strength_weak">القوة: ضعيفة. يصعب تخمين كلمات المرور الطويلة أكثر بكثير.</string>
+    <string name="password_strength_fair">القوة: متوسطة. زيادة الطول تجعلها أقوى.</string>
+    <string name="password_strength_strong">القوة: قوية</string>
+    <string name="backup_import_dialog_title">استيراد نسخة احتياطية</string>
+    <string name="import_merge">دمج</string>
+    <string name="import_merge_summary">إضافة رسائل النسخة الاحتياطية إلى أرشيفك الحالي</string>
+    <string name="import_replace">استبدال</string>
+    <string name="import_replace_summary">حذف أرشيفك الحالي ثم استعادة النسخة الاحتياطية</string>
+    <string name="backup_import_action">استيراد</string>
+    <string name="backup_exporting">جارٍ التصدير…</string>
+    <string name="backup_importing">جارٍ الاستيراد…</string>
+    <string name="backup_keep_open">يرجى إبقاء UnsendVault مفتوحاً حتى يكتمل هذا الإجراء.</string>
+    <string name="backup_export_success">تم حفظ النسخة الاحتياطية: %1$s في %2$s</string>
+    <string name="backup_import_success">تم استيراد %1$s في %2$s</string>
+    <string name="backup_password_lost">تمت مقاطعة النسخ الاحتياطي. يرجى بدء التصدير مرة أخرى.</string>
+    <string name="backup_error_wrong_password">كلمة المرور غير صحيحة، أو أن الملف ليس نسخة احتياطية من UnsendVault.</string>
+    <string name="backup_error_corrupt">ملف النسخة الاحتياطية تالف ولا يمكن قراءته.</string>
+    <string name="backup_error_version">تم إنشاء هذه النسخة الاحتياطية بواسطة إصدار أحدث من UnsendVault.</string>
+    <string name="backup_error_io">تعذرت قراءة الملف أو الكتابة فيه. جرب موقعاً آخر.</string>
+    <string name="backup_error_empty_password">أدخل كلمة مرور النسخة الاحتياطية.</string>
+
+    <!-- Reliability -->
+    <string name="reliability_title">البطارية والموثوقية</string>
+    <string name="reliability_summary">الحفاظ على تشغيل الالتقاط على الأجهزة التي توقف تطبيقات الخلفية</string>
+    <string name="reliability_intro">يقوم أندرويد بربط خدمة استماع إشعارات UnsendVault تلقائياً، ولا يحتاج التطبيق إلى البقاء مفتوحاً. ومع ذلك، تقوم بعض الهواتف بإيقاف خدمات الخلفية لتوفير البطارية. تجعل هذه الخطوات عملية الالتقاط أكثر ثباتاً وموثوقية.</string>
+    <string name="reliability_battery_title">عدم تقييد استهلاك البطارية</string>
+    <string name="reliability_battery_body">في القائمة التي تفتح، ابحث عن UnsendVault واختر \"بلا قيود\" أو \"عدم التحسين\".</string>
+    <string name="reliability_battery_unrestricted">حالياً: غير مقيّد</string>
+    <string name="reliability_battery_optimized">حالياً: محسّن للبطارية</string>
+    <string name="reliability_battery_action">فتح إعدادات البطارية</string>
+    <string name="reliability_oem_title">خطوة إضافية لهواتف %1$s</string>
+    <string name="reliability_oem_xiaomi">اسمح بالتشغيل التلقائي (Autostart) لـ UnsendVault، واضبط موفر البطارية على \"بلا قيود\".</string>
+    <string name="reliability_oem_samsung">في العناية بالجهاز ← البطارية، تأكد من عدم وجود UnsendVault في \"التطبيقات في وضع السكون\" أو \"السكون العميق\"، وأضفه إلى \"تطبيقات لا توضع في وضع السكون أبداً\".</string>
+    <string name="reliability_oem_huawei">في إطلاق التطبيقات، اضبط UnsendVault على \"إدارة يدوية\" واسمح بالتشغيل التلقائي والتشغيل في الخلفية.</string>
+    <string name="reliability_oem_oppo">اسمح بالتشغيل التلقائي (أو مدير بدء التشغيل) لـ UnsendVault واسمح بالنشاط في الخلفية في إعدادات البطارية.</string>
+    <string name="reliability_oem_vivo">اسمح ببدء التشغيل في الخلفية لـ UnsendVault واسمح باستهلاك الطاقة المرتفع في الخلفية.</string>
+    <string name="reliability_oem_oneplus">اسمح بالتشغيل التلقائي لـ UnsendVault واضبط تحسين البطارية على \"عدم التحسين\".</string>
+    <string name="reliability_oem_asus">في Mobile Manager، اسمح بالبدء التلقائي لـ UnsendVault.</string>
+    <string name="reliability_oem_generic">ابحث عن إعداد التشغيل التلقائي أو نشاط الخلفية لـ UnsendVault.</string>
+    <string name="reliability_oem_action">فتح إعدادات الشركة المصنعة</string>
+    <string name="reliability_rebind_title">إذا ظل الالتقاط غير متصل</string>
+    <string name="reliability_rebind_body">أوقف تفعيل UnsendVault ثم فعله مجدداً في إذن الوصول إلى الإشعارات. هذا يجبر أندرويد على إعادة ربط خدمة الاستماع.</string>
+    <string name="reliability_rebind_action">فتح الوصول إلى الإشعارات</string>
+    <string name="reliability_recents_tip">تلميح: تتيح بعض الهواتف قفل التطبيق في شاشة التطبيقات الحديثة حتى لا تتم إزالته عند الضغط على \"إغلاق الكل\".</string>
+    <string name="reliability_no_guarantee">تختلف هذه الإعدادات باختلاف الشركات المصنعة وإصدارات أندرويد. إذا فتح الزر شاشة خاطئة، فاستخدم صفحة معلومات التطبيق بدلاً من ذلك. حتى مع تطبيق كل الخطوات، قد يوقف النظام الالتقاط في حالات نادرة.</string>
+
+    <!-- About -->
+    <string name="about_title">حول التطبيق والحدود</string>
+    <string name="about_summary">ما يمكن لـ UnsendVault حفظه وما لا يمكنه، التراخيص</string>
+    <string name="about_version">الإصدار %1$s · أندرويد %2$s (API %3$d)</string>
+    <string name="about_intro">يحتفظ UnsendVault بأرشيف محلي على الجهاز لمعاينات الرسائل التي يعرضها أندرويد في الإشعارات. وهو تطبيق مستقل وغير تابع لأي خدمة مراسلة.</string>
+    <string name="about_saves_title">ما يتم حفظه</string>
+    <string-array name="about_saves">
+        <item>نص إشعارات الرسائل التي تصل بعد منح إذن الوصول إلى الإشعارات وأثناء كون الالتقاط نشطاً.</item>
+        <item>المرسل، والمحادثة، والوقت كما يظهر في الإشعار.</item>
+        <item>نص الإشعار المحدث، كسجل تحديثات.</item>
+        <item>إشعارات الحذف التي يعرضها التطبيق نفسه، وتُستخدم لتمييز الرسالة كاحتمال حذف.</item>
+    </string-array>
+    <string name="about_not_saved_title">ما لا يمكن حفظه</string>
+    <string-array name="about_not_saved">
+        <item>أي شيء قبل منح الإذن، أو أثناء توقف الالتقاط مؤقتاً أو انقطاع اتصاله.</item>
+        <item>رسائل المحادثات المكتومة، أو المحادثات ذات المعاينات المخفية أو الإشعارات المعطلة، والمحادثات التي كانت مفتوحة لديك وقت وصول الرسالة.</item>
+        <item>الصور ومقاطع الفيديو والرسائل الصوتية والملصقات والملفات (يُحفظ النص النائب فقط).</item>
+        <item>المحتوى الذي يحجبه أندرويد عن خدمات الاستماع إلى الإشعارات.</item>
+        <item>أي شيء من خوادم خدمة المراسلة: لا يمكن لـ UnsendVault استعادة الرسائل، بل يحتفظ فقط بما عرضه هاتفك بالفعل.</item>
+    </string-array>
+    <string name="about_deleted_title">حول \"احتمال الحذف\"</string>
+    <string name="about_deleted_body">تُميز الرسالة كاحتمال حذف فقط عندما يعرض التطبيق نفسه إشعار حذف لها، مثل \"تم حذف هذه الرسالة\"، ويظهر الإشعار المخزن معها. اختفاء الإشعار لا يُعتبر حذفاً أبداً؛ إذ تقوم التطبيقات بإزالة الإشعارات لأسباب عديدة طبيعية.</string>
+    <string name="about_android_title">ملاحظات إصدارات أندرويد</string>
+    <string-array name="about_android_notes">
+        <item>أندرويد 15 والإصدارات الأحدث: يتم إخفاء رموز التحقق والمحتويات الحساسة الأخرى عن خدمات الاستماع غير الموثوقة من قِبل النظام. تظهر هذه الرسائل كـ \"مخفي بواسطة أندرويد\".</item>
+        <item>أندرويد 17: قد يحجب النظام نصوص إشعارات المراسلة عن خدمات الاستماع غير المدرجة في قائمته البيضاء. تظهر الرسائل المتأثرة كـ \"مخفي بواسطة أندرويد\" ولا يمكن حفظ نصوصها.</item>
+        <item>تقوم بعض الشركات المصنعة بإيقاف خدمات الخلفية بقوة؛ راجع قسم البطارية والموثوقية.</item>
+    </string-array>
+    <string name="about_privacy_title">الخصوصية</string>
+    <string-array name="about_privacy">
+        <item>لا يتم رفع أي شيء من أرشيفك، ولا توجد تحليلات أو إعلانات. الاستخدام الوحيد للشبكة هو للتحقق الاختياري من التحديثات (الإعدادات &gt; التحديثات).</item>
+        <item>نصوص الرسائل والأسماء وعناوين المحادثات مشفرة على الجهاز بمفتاح محمي بواسطة Android Keystore. أسماء التطبيقات والأوقات وأعداد الرسائل ليست مشفرة، لكنها تظل في التخزين الخاص للتطبيق.</item>
+        <item>النسخ الاحتياطي السحابي لنظام أندرويد معطل؛ ويتم إنشاء ملفات التصدير المشفرة بطلب منك فقط.</item>
+    </string-array>
+    <string name="about_licenses_title">تراخيص المصدر المفتوح</string>
+    <string name="about_trademarks">أسماء التطبيقات هي علامات تجارية لأصحابها وتُستخدم فقط للتعريف بالتطبيقات التي ورد منها الإشعار.</string>
+    <!-- Vault health -->
+    <string name="vault_unavailable_title">تعذر فتح الأرشيف</string>
+    <string name="vault_unavailable_transient">لم يستجب التخزين الآمن للمفاتيح في أندرويد. سيعيد UnsendVault المحاولة تلقائياً؛ لم يتم حذف أي شيء.</string>
+    <string name="vault_unavailable_lost">المفتاح الذي يحمي أرشيفك لم يعد متوفراً على هذا الجهاز (على سبيل المثال بعد إعادة تعيين التخزين الآمن). لا يمكن فك تشفير الأرشيف القديم. إذا كانت لديك نسخة احتياطية مشفرة، يمكنك إعادة التعيين واستيرادها.</string>
+    <string name="vault_retry">إعادة المحاولة</string>
+    <string name="vault_reset">إعادة تعيين الأرشيف</string>
+    <string name="vault_reset_confirm_title">إعادة تعيين الأرشيف؟</string>
+    <string name="vault_reset_confirm_body">سيؤدي هذا إلى حذف الأرشيف غير القابل للقراءة نهائياً من هذا الجهاز وبدء أرشيف مشفر جديد وفارغ. لن تتأثر النسخ الاحتياطية المصدرة.</string>
+    <string name="vault_reset_confirm_action">إعادة تعيين</string>
+    <!-- Legacy notice -->
+    <string name="vault_legacy_discarded_title">تمت إزالة أرشيفك السابق</string>
+    <string name="vault_legacy_discarded_body">كان الأرشيف من الإصدار 1.0.15 يستخدم تنسيقاً لا يمكن لهذا الإصدار قراءته، لذا تم بدء أرشيف جديد وفارغ. إذا قمت بتصدير نسخة احتياطية سابقاً، يمكنك استيرادها الآن (الإعدادات، النسخ الاحتياطي).</string>
+    <string name="vault_legacy_discarded_dismiss">فهمت ذلك</string>
+</resources>

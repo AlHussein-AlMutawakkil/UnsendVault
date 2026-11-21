@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home-screen widget strings (owned by the widget layer). Widgets never render message text unless the user enabled
+     "Show content in widgets" and the app lock is off. -->
+<resources>
+    <!-- Widget picker labels and descriptions -->
+    <string name="widget_count_label">إحصائيات الأرشيف</string>
+    <string name="widget_count_description">إجمالي الرسائل والمحادثات والتطبيقات المؤرشفة. يعرض أرقاماً فقط.</string>
+    <string name="widget_recent_label">الرسائل الأخيرة</string>
+    <string name="widget_recent_description">آخر نشاط تمت أرشفته حسب التطبيق. يظل نص الرسالة مخفياً ما لم تسمح به في الإعدادات.</string>
+    <string name="widget_favorites_label">المفضلة</string>
+    <string name="widget_favorites_description">أحدث رسائلك المفضلة. يظل نص الرسالة مخفياً ما لم تسمح به في الإعدادات.</string>
+    <string name="widget_apps_label">ملخص التطبيقات</string>
+    <string name="widget_apps_description">عدد الرسائل المؤرشفة لتطبيقاتك الأكثر نشاطاً.</string>
+    <string name="widget_capture_label">التحكم في الالتقاط</string>
+    <string name="widget_capture_description">معرفة ما إذا كان UnsendVault يقوم بالأرشفة وإيقافها مؤقتاً أو استئنافها.</string>
+
+    <!-- Shared -->
+    <string name="widget_app_name">UnsendVault</string>
+    <string name="widget_open_app">فتح UnsendVault</string>
+    <string name="widget_error_title">تعذر تحميل الأرشيف</string>
+    <string name="widget_empty_title">لا توجد رسائل بعد</string>
+    <string name="widget_empty_favorites">لا توجد مفضلات بعد</string>
+    <string name="widget_empty_hint">تظهر الرسائل هنا بمجرد أرشفتها</string>
+    <string name="widget_locked_hint">قفل التطبيق مفعّل. افتح UnsendVault للعرض.</string>
+    <string name="widget_content_hidden">المحتوى مخفي</string>
+    <string name="widget_just_now">الآن</string>
+    <string name="widget_separator"> · </string>
+    <string name="widget_icon_lock">قفل التطبيق مفعّل</string>
+
+    <!-- Count widget -->
+    <plurals name="widget_messages_label">
+        <item quantity="zero">رسالة مؤرشفة</item>
+        <item quantity="one">رسالة مؤرشفة</item>
+        <item quantity="two">رسالتان مؤرشفتان</item>
+        <item quantity="few">رسائل مؤرشفة</item>
+        <item quantity="many">رسالة مؤرشفة</item>
+        <item quantity="other">رسالة مؤرشفة</item>
+    </plurals>
+    <plurals name="widget_conversations_count">
+        <item quantity="zero">لا توجد محادثات</item>
+        <item quantity="one">محادثة واحدة</item>
+        <item quantity="two">محادثتان</item>
+        <item quantity="few">%s محادثات</item>
+        <item quantity="many">%s محادثة</item>
+        <item quantity="other">%s محادثة</item>
+    </plurals>
+    <plurals name="widget_apps_count">
+        <item quantity="zero">لا توجد تطبيقات</item>
+        <item quantity="one">تطبيق واحد</item>
+        <item quantity="two">تطبيقان</item>
+        <item quantity="few">%s تطبيقات</item>
+        <item quantity="many">%s تطبيقاً</item>
+        <item quantity="other">%s تطبيق</item>
+    </plurals>
+    <plurals name="widget_messages_count">
+        <item quantity="zero">لا توجد رسائل</item>
+        <item quantity="one">رسالة واحدة</item>
+        <item quantity="two">رسالتان</item>
+        <item quantity="few">%s رسائل</item>
+        <item quantity="many">%s رسالة</item>
+        <item quantity="other">%s رسالة</item>
+    </plurals>
+    <plurals name="widget_favorites_count">
+        <item quantity="zero">لا توجد مفضلات</item>
+        <item quantity="one">مفضلة واحدة</item>
+        <item quantity="two">مفضلتان</item>
+        <item quantity="few">%s مفضلات</item>
+        <item quantity="many">%s مفضلة</item>
+        <item quantity="other">%s مفضلة</item>
+    </plurals>
+    <plurals name="widget_recent_count">
+        <item quantity="zero">لا يوجد حديثاً</item>
+        <item quantity="one">عنصر حديث واحد</item>
+        <item quantity="two">عنصران حديثان</item>
+        <item quantity="few">%s عناصر حديثة</item>
+        <item quantity="many">%s عنصراً حديثاً</item>
+        <item quantity="other">%s عنصر حديث</item>
+    </plurals>
+    <string name="widget_count_a11y">%1$s. %2$s. %3$s.</string>
+
+    <!-- Recent / Favorites -->
+    <string name="widget_recent_title">الحديثة</string>
+    <string name="widget_favorites_title">المفضلة</string>
+    <string name="widget_apps_title">أبرز التطبيقات</string>
+
+    <!-- Capture control -->
+    <string name="widget_capture_title">الالتقاط</string>
+    <string name="widget_capture_active">نشط</string>
+    <string name="widget_capture_paused">متوقف مؤقتاً</string>
+    <string name="widget_capture_access_needed">يلزم الوصول إلى الإشعارات</string>
+    <string name="widget_capture_disconnected">خدمة الاستماع غير متصلة</string>
+    <string name="widget_capture_action_pause">إيقاف مؤقت</string>
+    <string name="widget_capture_action_resume">استئناف</string>
+    <string name="widget_capture_action_grant">منح الإذن</string>
+    <string name="widget_capture_action_reconnect">إعادة الاتصال</string>
+    <string name="widget_capture_a11y_active">الالتقاط نشط. اضغط مرتين للإيقاف المؤقت.</string>
+    <string name="widget_capture_a11y_paused">الالتقاط متوقف مؤقتاً. اضغط مرتين للاستئناف.</string>
+    <string name="widget_capture_a11y_access">يلزم إذن الوصول إلى الإشعارات. اضغط مرتين لفتح UnsendVault.</string>
+    <string name="widget_capture_a11y_disconnected">خدمة الاستماع إلى الإشعارات غير متصلة. اضغط مرتين لإعادة الاتصال.</string>
+
+    <!-- Static previews -->
+    <string name="widget_preview_count_number">1,284</string>
+    <string name="widget_preview_count_detail">96 محادثة · 7 تطبيقات</string>
+    <string name="widget_preview_row_1">الرسائل · 4 رسائل · منذ دقيقتين</string>
+    <string name="widget_preview_row_2">تطبيق محادثة · رسالتان · منذ 15 دقيقة</string>
+    <string name="widget_preview_row_3">البريد · رسالة واحدة · منذ ساعة</string>
+</resources>

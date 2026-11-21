@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Opt-in update check (update package, ui/update, ui/settings/UpdateSettingsSection). See docs/UPDATES.md. -->
+<resources>
+    <!-- Consent dialog, shown once on the main screen after onboarding. -->
+    <string name="update_consent_title">التحقق من التحديثات تلقائياً؟</string>
+    <string name="update_consent_body">يمكن لـ UnsendVault الاتصال بـ GitHub (api.github.com) بحد أقصى مرة واحدة يومياً أثناء استخدام التطبيق لمعرفة ما إذا كان هناك إصدار أحدث متوفراً.\n\nيرى GitHub عنوان IP الخاص بك وإصدار التطبيق، مثل أي زيارة لموقع ويب. لا يتم إرسال أي شيء من أرشيفك مطلقاً.\n\nيمكنك تغيير هذا في أي وقت من الإعدادات.</string>
+    <string name="update_consent_allow">السماح</string>
+    <string name="update_consent_not_now">ليس الآن</string>
+
+    <!-- Update dialog. -->
+    <string name="update_available_title">يتوفر إصدار جديد من UnsendVault %1$s</string>
+    <string name="update_current_version">الإصدار المثبت لديك هو %1$s.</string>
+    <string name="update_notes_heading">ما الجديد</string>
+    <string name="update_verify_hint">يؤدي التنزيل إلى فتح ملف APK في متصفحك؛ وتقوم بتثبيته بنفسك. تسرد صفحة الإصدار رمز التحقق SHA-256 وشهادة التوقيع لتتمكن من التحقق من الملف، ولن يثبته أندرويد فوق هذا التطبيق إلا إذا كان موقعاً بنفس المفتاح.</string>
+    <string name="update_no_apk_hint">لا يحتوي هذا الإصدار على ملف APK مرفق؛ افتح صفحة الإصدار للحصول على التفاصيل.</string>
+    <string name="update_action_download">تنزيل</string>
+    <string name="update_action_release_page">صفحة الإصدار</string>
+    <string name="update_action_later">لاحقاً</string>
+    <string name="update_action_skip">تخطي هذا الإصدار</string>
+    <string name="update_open_failed">لا يوجد متصفح متاح لفتح الرابط.</string>
+
+    <!-- Settings section. -->
+    <string name="settings_section_updates">التحديثات</string>
+    <string name="update_auto_title">التحقق من التحديثات تلقائياً</string>
+    <string name="update_auto_summary">مرة واحدة على الأكثر يومياً أثناء استخدام التطبيق. يتصل فقط بـ api.github.com؛ ولا يتم إرسال أي شيء من أرشيفك.</string>
+    <string name="update_auto_summary_debug">لا تعمل الفحوصات التلقائية أبداً في نسخ التطوير (debug). استخدم \"التحقق الآن\" للاختبار.</string>
+    <string name="update_check_now">التحقق الآن</string>
+    <string name="update_check_now_summary">يتصل بـ GitHub مرة واحدة لمعرفة ما إذا كان هناك إصدار أحدث.</string>
+    <string name="update_show_update">عرض التحديث</string>
+    <string name="update_checking">جارٍ التحقق…</string>
+    <string name="update_result_up_to_date">أنت تستخدم أحدث إصدار (%1$s)</string>
+    <string name="update_result_available">الإصدار %1$s متوفر الآن</string>
+    <string name="update_result_offline">تعذر الاتصال بـ GitHub</string>
+    <string name="update_result_rate_limited">تم بلوغ الحد المسموح به لطلبات GitHub، يرجى المحاولة لاحقاً</string>
+    <string name="update_result_invalid">أرسل GitHub استجابة غير متوقعة</string>
+    <string name="update_version_info">الإصدار المثبت: %1$s · آخر تحقق: %2$s</string>
+    <string name="update_never_checked">أبداً</string>
+</resources>

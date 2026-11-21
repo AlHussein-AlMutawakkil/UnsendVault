@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Where an app is installed, shown in the app pickers. -->
+    <string name="profile_work">ملف العمل</string>
+    <string name="profile_clone">تطبيق مستنسخ</string>
+    <string name="profile_private">المساحة الخاصة</string>
+    <string name="profile_other">ملف شخصي آخر</string>
+    <string name="profile_also_work">مثبت أيضاً في ملف العمل</string>
+    <string name="profile_also_clone">مستنسخ أيضاً</string>
+    <string name="profile_also_private">مثبت أيضاً في المساحة الخاصة</string>
+    <string name="profile_also_other">مثبت أيضاً في ملف شخصي آخر</string>
+    <string name="exclusions_profiles_note">استثناء أي تطبيق يستثني أيضاً نسخه في ملف العمل والملفات الشخصية الأخرى.</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start tab -->
+    <string name="settings_start_tab">فتح التطبيق على</string>
+
+    <!-- Saved-message notifications -->
+    <string name="settings_section_notifications">الإشعارات</string>
+    <string name="settings_saved_notifications">إشعار عند حفظ الرسائل</string>
+    <string name="settings_saved_notifications_summary">إشعار صامت لكل محادثة، اضغط عليه لفتح المحادثة هنا</string>
+    <string name="settings_saved_notifications_blocked">الإشعارات معطلة لـ UnsendVault. اضغط لفتح إعدادات النظام.</string>
+    <string name="settings_notification_content">إظهار الأسماء والنص في الإشعارات</string>
+    <string name="settings_notification_content_summary">عند التعطيل: تذكر الإشعارات اسم التطبيق وعدد الرسائل فقط. لا تظهر إطلاقاً على شاشة القفل.</string>
+    <string name="settings_notification_content_locked">غير متوفر أثناء تفعيل قفل التطبيق</string>
+    <string name="notif_channel_saved">الرسائل المحفوظة</string>
+    <string name="notif_channel_saved_description">إشعار صامت عندما يحفظ UnsendVault رسائل جديدة عند تفعيله</string>
+    <string name="notif_saved_title_private">تم الحفظ من %1$s</string>
+    <string name="notif_public_title">تم حفظ رسائل جديدة</string>
+    <string name="notif_saved_and_deleted">%1$s · %2$s</string>
+    <plurals name="notif_saved_count">
+        <item quantity="zero">لم تُحفظ أي رسالة جديدة</item>
+        <item quantity="one">تم حفظ رسالة جديدة واحدة</item>
+        <item quantity="two">تم حفظ رسالتين جديدتين</item>
+        <item quantity="few">تم حفظ %d رسائل جديدة</item>
+        <item quantity="many">تم حفظ %d رسالة جديدة</item>
+        <item quantity="other">تم حفظ %d رسالة جديدة</item>
+    </plurals>
+    <plurals name="notif_deleted_count">
+        <item quantity="zero">لم يتم تمييز أي رسالة محذوفة</item>
+        <item quantity="one">تم تمييز رسالة واحدة كمحذوفة محتملة</item>
+        <item quantity="two">تم تمييز رسالتين كمحذوفتين محتملتين</item>
+        <item quantity="few">تم تمييز %d رسائل كمحذوفة محتملة</item>
+        <item quantity="many">تم تمييز %d رسالة كمحذوفة محتملة</item>
+        <item quantity="other">تم تمييز %d رسالة كمحذوفة محتملة</item>
+    </plurals>
+
+    <!-- Reply -->
+    <string name="reply_hint">الرد عبر %1$s</string>
+    <string name="reply_send">إرسال الرد</string>
+    <string name="reply_caption">يتم الإرسال عبر إشعار %1$s الأصلي. تفقد %1$s للتأكد من وصوله.</string>
+    <string name="reply_unavailable">يعمل الرد فقط ما دام إشعار %1$s لهذه المحادثة ما زال ظاهراً.</string>
+    <string name="reply_listener_off">يتطلب الرد تفعيل الالتقاط ومنح إذن الوصول إلى الإشعارات.</string>
+    <string name="reply_open_app">فتح %1$s</string>
+    <string name="reply_sent">تم تسليم الرد إلى %1$s. تحقق هناك للتأكد من تسليمه.</string>
+    <string name="reply_gone">اختفى إشعار %1$s، لذا تعذر إرسال الرد. افتح %1$s للرد.</string>
+    <string name="reply_failed">لم يقبل %1$s الرد. افتح %1$s للرد.</string>
+</resources>
