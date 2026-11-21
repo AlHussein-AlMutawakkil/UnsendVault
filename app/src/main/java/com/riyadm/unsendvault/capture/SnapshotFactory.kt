@@ -18,7 +18,7 @@ import com.riyadm.unsendvault.core.model.VaultSettings
 object SnapshotFactory {
     /** Upper bound on MessagingStyle entries copied per notification (newest kept). */
     const val MAX_MESSAGES = 100
-    private const val MAX_FIELD_LENGTH = 5_000
+    private const val MAX_FIELD_LENGTH = 50_000
 
     // Notification.EXTRA_* keys as literals so reading them never depends on the runtime API level.
     private const val EXTRA_TITLE = "android.title"

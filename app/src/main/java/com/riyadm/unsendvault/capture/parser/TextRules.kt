@@ -11,8 +11,8 @@ import java.util.Locale
  * required for a normal message to be captured.
  */
 object TextRules {
-    /** Maximum characters kept for one message body (the framework itself caps notification text at 5 KB). */
-    const val MAX_TEXT_LENGTH = 5_000
+    /** Maximum characters kept for one message body. */
+    const val MAX_TEXT_LENGTH = 50_000
 
     private val INVISIBLE = Regex("[\\u00AD\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u2069\\uFEFF]")
     private val WHITESPACE = Regex("\\s+")

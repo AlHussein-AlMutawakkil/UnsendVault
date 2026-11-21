@@ -122,7 +122,16 @@ open class GenericNotificationParser(protected val placeholders: CapturePlacehol
                     text = placeholders.systemRedacted; kind = ContentKind.SYSTEM_REDACTED
                 }
                 else -> {
-                    val body = TextRules.clampBody(cleanBody(raw).trim())
+                    var body = TextRules.clampBody(cleanBody(raw).trim())
+                    // If this notification contains only 1 message, check if bigText has a longer version
+                    if (merged.size == 1) {
+                        val big = s.bigText?.let { TextRules.clampBody(cleanBody(it).trim()) }
+                        if (!big.isNullOrEmpty() && big.length > body.length &&
+                            (big.startsWith(body.take(minOf(15, body.length))) || body.startsWith(big.take(minOf(15, big.length))))
+                        ) {
+                            body = big
+                        }
+                    }
                     if (body.isEmpty()) continue
                     val hit = deletionMarker(body, sender, knownNames)
                     if (hit != null) {
