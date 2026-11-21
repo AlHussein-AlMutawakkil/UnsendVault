@@ -47,6 +47,7 @@ fun captureStatusOf(accessGranted: Boolean, captureEnabled: Boolean, connected: 
 data class HomeUiState(
     val loading: Boolean = true,
     val tab: HomeTab = HomeTab.RECENT,
+    val visibleTabs: List<HomeTab> = HomeTab.entries,
     val captureStatus: CaptureStatus = CaptureStatus.ACTIVE,
     val apps: List<AppSummary> = emptyList(),
     val selectedPackages: Set<String> = emptySet(),
@@ -56,6 +57,13 @@ data class HomeUiState(
     val appLockEnabled: Boolean = false,
     val selectedConversationId: Long? = null,
     val showEncryptedOnly: Boolean = false,
+)
+
+private data class HomeSettingsInfo(
+    val capture: CaptureStatus,
+    val appLock: Boolean,
+    val showEncryptedOnly: Boolean,
+    val visibleTabs: List<HomeTab>,
 )
 
 class HomeViewModel(
@@ -87,7 +95,8 @@ class HomeViewModel(
     }
 
     private val status = combine(accessGranted, listenerStatus.connected, settings.settings) { access, connected, s ->
-        Triple(captureStatusOf(access, s.captureEnabled, connected), s.appLockEnabled, s.showEncryptedOnly)
+        val visibleTabs = HomeTab.entries.filter { it.name in s.visibleHomeTabs }.ifEmpty { listOf(HomeTab.RECENT) }
+        HomeSettingsInfo(captureStatusOf(access, s.captureEnabled, connected), s.appLockEnabled, s.showEncryptedOnly, visibleTabs)
     }
 
     private val effectiveTab = combine(tab, settings.settings) { picked, s -> picked ?: s.startTab.toHomeTab() }
@@ -96,31 +105,33 @@ class HomeViewModel(
 
     val state: StateFlow<HomeUiState> = combine(
         ui, status, apps, combine(recent, conversationsWithUnread) { r, c -> r to c }, vault.observeStats(),
-    ) { (t, filter, selectedConv), (capture, lock, encOnly), appList, (messages, convs), stats ->
+    ) { (t, filter, selectedConv), settingsInfo, appList, (messages, convs), stats ->
         val known = appList.mapTo(HashSet()) { it.packageName }
-        val displayedRecent = if (encOnly) {
+        val displayedRecent = if (settingsInfo.showEncryptedOnly) {
             messages.filter { MessageCryptoEngine.isEncrypted(it.text) }
         } else {
             messages
         }
-        val displayedConvs = if (encOnly) {
+        val displayedConvs = if (settingsInfo.showEncryptedOnly) {
             val encryptedIds = messages.filter { MessageCryptoEngine.isEncrypted(it.text) }.mapTo(HashSet()) { it.conversationId }
             convs.filter { it.id in encryptedIds || MessageCryptoEngine.isEncrypted(it.lastMessagePreview.orEmpty()) }
         } else {
             convs
         }
+        val currentTab = if (t in settingsInfo.visibleTabs) t else settingsInfo.visibleTabs.first()
         HomeUiState(
             loading = false,
-            tab = t,
-            captureStatus = capture,
+            tab = currentTab,
+            visibleTabs = settingsInfo.visibleTabs,
+            captureStatus = settingsInfo.capture,
             apps = appList,
             selectedPackages = filter.filterTo(LinkedHashSet()) { it in known },
             recent = displayedRecent,
             conversations = displayedConvs,
             stats = stats,
-            appLockEnabled = lock,
+            appLockEnabled = settingsInfo.appLock,
             selectedConversationId = selectedConv?.takeIf { id -> convs.any { it.id == id } },
-            showEncryptedOnly = encOnly,
+            showEncryptedOnly = settingsInfo.showEncryptedOnly,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState(tab = settings.current.startTab.toHomeTab()))
 
@@ -132,7 +143,7 @@ class HomeViewModel(
 
     fun selectTab(value: HomeTab) = tab.update { value }
 
-    fun togglePackage(packageName: String) = packageFilter.update { if (packageName in it) it - packageName else it + packageName }
+    fun togglePackage(packageName: String) = packageFilter.update { if (packageName in it) emptySet() else setOf(packageName) }
 
     fun clearPackageFilter() = packageFilter.update { emptySet() }
 

@@ -116,6 +116,7 @@ data class ConversationUiState(
     val conversationKey: String? = null,
     val globalKey: String = "",
     val showEncryptedOnly: Boolean = false,
+    val isConversationFavorite: Boolean = false,
 ) {
     val selecting: Boolean get() = selection.isNotEmpty()
     val hasPrivateKey: Boolean get() = !conversationKey.isNullOrBlank()
@@ -144,6 +145,7 @@ private data class CryptoUiInfo(
     val cover: String,
     val keyInfo: KeyInfo,
     val showEncryptedOnly: Boolean,
+    val isFavoriteConversation: Boolean,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -209,7 +211,7 @@ class ConversationViewModel(
         keyInfo,
         settingsFlow,
     ) { mode, saved, cover, keys, s ->
-        CryptoUiInfo(mode, saved, cover, keys, s.showEncryptedOnly)
+        CryptoUiInfo(mode, saved, cover, keys, s.showEncryptedOnly, conversationId in s.favoriteConversationIds)
     }
 
     private val messages = vault.observeMessages(MessageQuery(conversationId = conversationId, limit = MESSAGE_LIMIT))
@@ -266,8 +268,19 @@ class ConversationViewModel(
             conversationKey = crypto.keyInfo.privateKey,
             globalKey = crypto.keyInfo.globalKey,
             showEncryptedOnly = crypto.showEncryptedOnly,
+            isConversationFavorite = crypto.isFavoriteConversation,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ConversationUiState())
+
+    fun toggleConversationFavorite() {
+        viewModelScope.launch {
+            settingsRepository?.update { s ->
+                val current = s.favoriteConversationIds
+                val updated = if (conversationId in current) current - conversationId else current + conversationId
+                s.copy(favoriteConversationIds = updated)
+            }
+        }
+    }
 
     fun refreshReply() = replyRefresh.update { it + 1 }
 

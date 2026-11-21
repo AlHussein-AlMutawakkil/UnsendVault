@@ -262,7 +262,14 @@ private fun AppNavHost(navController: NavHostController, isWide: Boolean, onLock
             SearchRoute(containerViewModel { SearchViewModel(it.vaultRepository, settings = it.settingsRepository) }) { navController.navigate(MessageDest(it)) }
         }
         composable<FavoritesDest> {
-            FavoritesRoute(containerViewModel { FavoritesViewModel(it.vaultRepository) }) { navController.navigate(MessageDest(it)) }
+            FavoritesRoute(
+                viewModel = containerViewModel { FavoritesViewModel(it.vaultRepository, it.settingsRepository) },
+                onOpenMessage = { navController.navigate(MessageDest(it)) },
+                onOpenConversation = {
+                    container.readTracker.markAsRead(it)
+                    navController.navigate(ConversationDest(it))
+                },
+            )
         }
         composable<SettingsDest> {
             SettingsRoute(

@@ -262,6 +262,10 @@ class SettingsViewModel(
     }
 
     fun setStartTab(tab: StartTab) = update { it.copy(startTab = tab) }
+    fun setVisibleHomeTabs(tabs: Set<String>) {
+        if (tabs.isEmpty()) return
+        update { it.copy(visibleHomeTabs = tabs) }
+    }
 
     /** The screen asks for POST_NOTIFICATIONS first on Android 13+; this only stores the choice. */
     fun setSavedMessageNotifications(value: Boolean) {

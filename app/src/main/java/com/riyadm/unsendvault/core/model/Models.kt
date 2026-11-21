@@ -232,6 +232,10 @@ data class VaultSettings(
     val conversationKeysEncrypted: Map<String, String> = emptyMap(),
     /** Map of conversation key -> custom EncryptionMode name (NONE, EXPLICIT, STEGANO). */
     val conversationEncryptionModes: Map<String, String> = emptyMap(),
+    /** Set of conversation IDs marked as favorite. */
+    val favoriteConversationIds: Set<Long> = emptySet(),
+    /** Set of visible Home tab names ("RECENT", "CONVERSATIONS", "APPS"). */
+    val visibleHomeTabs: Set<String> = setOf("RECENT", "CONVERSATIONS", "APPS"),
 ) {
     /** Exclusions always apply; in selected mode the app must also be selected. */
     fun savesApp(packageName: String): Boolean =

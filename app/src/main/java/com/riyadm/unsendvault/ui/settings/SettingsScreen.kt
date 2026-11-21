@@ -6,6 +6,7 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,6 +56,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -126,7 +128,7 @@ object SettingsTestTags {
     const val SUGGEST_NEW_APPS = "settings_suggest_new_apps"
 }
 
-private enum class SettingsDialog { NONE, APPS_TO_SAVE, RETENTION, TIMEOUT, THEME, LANGUAGE, START_TAB, REMINDER, DELETE_ALL, GLOBAL_KEY, DEFAULT_ENCRYPTION_MODE, MESSAGE_COMPRESSION }
+private enum class SettingsDialog { NONE, APPS_TO_SAVE, RETENTION, TIMEOUT, THEME, LANGUAGE, START_TAB, VISIBLE_HOME_TABS, REMINDER, DELETE_ALL, GLOBAL_KEY, DEFAULT_ENCRYPTION_MODE, MESSAGE_COMPRESSION }
 
 @Composable
 fun SettingsRoute(
@@ -430,6 +432,12 @@ fun SettingsScreen(
                     modifier = Modifier.testTag(SettingsTestTags.START_TAB),
                 )
                 ValueRow(
+                    title = "أقسام الواجهة الرئيسية المعروضة",
+                    value = visibleHomeTabsSummary(s.visibleHomeTabs),
+                    icon = Icons.Outlined.Checklist,
+                    onClick = { dialog = SettingsDialog.VISIBLE_HOME_TABS },
+                )
+                ValueRow(
                     title = stringResource(R.string.settings_theme),
                     value = themeLabel(s.themeMode),
                     icon = Icons.Outlined.DarkMode,
@@ -624,6 +632,11 @@ private fun SettingsDialogs(
             },
             onDismiss = onDismiss,
         )
+        SettingsDialog.VISIBLE_HOME_TABS -> VisibleHomeTabsDialog(
+            currentTabs = s.visibleHomeTabs,
+            onConfirm = { viewModel.setVisibleHomeTabs(it) },
+            onDismiss = onDismiss,
+        )
         SettingsDialog.REMINDER -> ChoiceDialog(
             title = stringResource(R.string.backup_reminder),
             options = SettingsViewModel.REMINDER_OPTIONS,
@@ -799,6 +812,86 @@ private fun startTabLabel(tab: StartTab): String = stringResource(
         StartTab.APPS -> R.string.home_tab_apps
     },
 )
+
+private fun visibleHomeTabsSummary(visibleTabs: Set<String>): String {
+    val labels = mutableListOf<String>()
+    if ("RECENT" in visibleTabs) labels.add("الحديثة")
+    if ("CONVERSATIONS" in visibleTabs) labels.add("المحادثات")
+    if ("APPS" in visibleTabs) labels.add("التطبيقات")
+    return if (labels.isEmpty()) "الحديثة" else labels.joinToString("، ")
+}
+
+@Composable
+private fun VisibleHomeTabsDialog(
+    currentTabs: Set<String>,
+    onConfirm: (Set<String>) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var selected by rememberSaveable { mutableStateOf(currentTabs.ifEmpty { setOf("RECENT", "CONVERSATIONS", "APPS") }) }
+    val tabOptions = listOf(
+        "RECENT" to "الحديثة",
+        "CONVERSATIONS" to "المحادثات",
+        "APPS" to "التطبيقات",
+    )
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("أقسام الواجهة الرئيسية المعروضة") },
+        text = {
+            Column {
+                Text(
+                    text = "حدد التبويبات والأقسام التي تريد ظهورها في الشاشة الرئيسية (يجب إبقاء قسم واحد على الأقل):",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 12.dp),
+                )
+                tabOptions.forEach { (tabKey, tabLabel) ->
+                    val isChecked = tabKey in selected
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                if (isChecked) {
+                                    if (selected.size > 1) {
+                                        selected = selected - tabKey
+                                    }
+                                } else {
+                                    selected = selected + tabKey
+                                }
+                            }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(
+                            checked = isChecked,
+                            onCheckedChange = { checked ->
+                                if (checked) {
+                                    selected = selected + tabKey
+                                } else if (selected.size > 1) {
+                                    selected = selected - tabKey
+                                }
+                            },
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(tabLabel, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm(selected)
+                onDismiss()
+            }) {
+                Text("حفظ")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+    )
+}
 
 @Composable
 private fun themeLabel(mode: ThemeMode): String = stringResource(

@@ -61,6 +61,37 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun appFilterEnforcesSingleSelection() = runTest {
+        val vm = vm()
+        vm.state.testState {
+            awaitMatching { !it.loading }
+            vm.togglePackage(Fixtures.TELEGRAM)
+            assertEquals(setOf(Fixtures.TELEGRAM), awaitMatching { it.selectedPackages == setOf(Fixtures.TELEGRAM) }.selectedPackages)
+
+            // Selecting WHATSAPP replaces TELEGRAM (strict single select)
+            vm.togglePackage(Fixtures.WHATSAPP)
+            assertEquals(setOf(Fixtures.WHATSAPP), awaitMatching { it.selectedPackages == setOf(Fixtures.WHATSAPP) }.selectedPackages)
+
+            // Toggling WHATSAPP again deselects it
+            vm.togglePackage(Fixtures.WHATSAPP)
+            assertTrue(awaitMatching { it.selectedPackages.isEmpty() }.selectedPackages.isEmpty())
+        }
+    }
+
+    @Test
+    fun dynamicVisibleTabsConfigurable() = runTest {
+        val vm = vm()
+        vm.state.testState {
+            val initial = awaitMatching { !it.loading }
+            assertEquals(listOf(HomeTab.RECENT, HomeTab.CONVERSATIONS, HomeTab.APPS), initial.visibleTabs)
+
+            settings.update { it.copy(visibleHomeTabs = setOf("CONVERSATIONS")) }
+            val state = awaitMatching { it.visibleTabs == listOf(HomeTab.CONVERSATIONS) }
+            assertEquals(HomeTab.CONVERSATIONS, state.tab)
+        }
+    }
+
+    @Test
     fun openAppSwitchesToConversations() = runTest {
         val vm = vm()
         vm.state.testState {

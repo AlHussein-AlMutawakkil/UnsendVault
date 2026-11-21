@@ -154,25 +154,28 @@ fun HomeScreen(
         },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            PrimaryTabRow(selectedTabIndex = state.tab.ordinal) {
-                HomeTab.entries.forEach { tab ->
-                    Tab(
-                        selected = state.tab == tab,
-                        onClick = { onSelectTab(tab) },
-                        text = {
-                            Text(
-                                stringResource(
-                                    when (tab) {
-                                        HomeTab.RECENT -> R.string.home_tab_recent
-                                        HomeTab.CONVERSATIONS -> R.string.home_tab_conversations
-                                        HomeTab.APPS -> R.string.home_tab_apps
-                                    },
-                                ),
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                    )
+            if (state.visibleTabs.size > 1) {
+                val selectedIndex = state.visibleTabs.indexOf(state.tab).coerceAtLeast(0)
+                PrimaryTabRow(selectedTabIndex = selectedIndex) {
+                    state.visibleTabs.forEach { tab ->
+                        Tab(
+                            selected = state.tab == tab,
+                            onClick = { onSelectTab(tab) },
+                            text = {
+                                Text(
+                                    stringResource(
+                                        when (tab) {
+                                            HomeTab.RECENT -> R.string.home_tab_recent
+                                            HomeTab.CONVERSATIONS -> R.string.home_tab_conversations
+                                            HomeTab.APPS -> R.string.home_tab_apps
+                                        },
+                                    ),
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                        )
+                    }
                 }
             }
             val header: LazyListScope.() -> Unit = {

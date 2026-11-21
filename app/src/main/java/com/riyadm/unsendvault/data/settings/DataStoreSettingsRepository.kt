@@ -100,6 +100,8 @@ class DataStoreSettingsRepository(
         val showEncryptedOnly = booleanPreferencesKey("show_encrypted_only")
         val conversationKeysEncrypted = stringPreferencesKey("conv_keys_enc")
         val conversationEncryptionModes = stringPreferencesKey("conv_enc_modes")
+        val favoriteConversationIds = stringSetPreferencesKey("favorite_conv_ids")
+        val visibleHomeTabs = stringSetPreferencesKey("visible_home_tabs")
     }
 
     companion object {
@@ -147,6 +149,9 @@ class DataStoreSettingsRepository(
                         val parts = line.split("::", limit = 2)
                         if (parts.size == 2) parts[0] to parts[1] else null
                     }?.toMap() ?: DEFAULTS.conversationEncryptionModes,
+                favoriteConversationIds = p[Keys.favoriteConversationIds]?.mapNotNull { it.toLongOrNull() }?.toSet()
+                    ?: DEFAULTS.favoriteConversationIds,
+                visibleHomeTabs = p[Keys.visibleHomeTabs] ?: DEFAULTS.visibleHomeTabs,
             )
         }
 
@@ -181,6 +186,8 @@ class DataStoreSettingsRepository(
             p[Keys.showEncryptedOnly] = s.showEncryptedOnly
             p[Keys.conversationKeysEncrypted] = s.conversationKeysEncrypted.entries.joinToString("\n") { "${it.key}::${it.value}" }
             p[Keys.conversationEncryptionModes] = s.conversationEncryptionModes.entries.joinToString("\n") { "${it.key}::${it.value}" }
+            p[Keys.favoriteConversationIds] = s.favoriteConversationIds.map { it.toString() }.toSet()
+            p[Keys.visibleHomeTabs] = s.visibleHomeTabs
         }
     }
 }

@@ -13,6 +13,7 @@ import com.riyadm.unsendvault.ui.conversation.TimelineItem
 import com.riyadm.unsendvault.ui.conversation.buildTimeline
 import com.riyadm.unsendvault.ui.debug.DemoData
 import com.riyadm.unsendvault.ui.detail.MessageDetailViewModel
+import com.riyadm.unsendvault.ui.favorites.FavoritesTab
 import com.riyadm.unsendvault.ui.favorites.FavoritesViewModel
 import com.riyadm.unsendvault.ui.onboarding.OnboardingStep
 import com.riyadm.unsendvault.ui.onboarding.OnboardingViewModel
@@ -72,6 +73,29 @@ class ConversationAndDetailViewModelTest {
     }
 
     @Test
+    fun conversationFavoriteToggle() = runTest {
+        val settings = InMemorySettingsRepository()
+        val vm = ConversationViewModel(
+            conversationId = Fixtures.alex.id,
+            vault = vault,
+            zone = ZoneOffset.UTC,
+            settingsRepository = settings,
+        )
+        vm.state.testState {
+            val s0 = awaitMatching { !it.loading }
+            assertFalse(s0.isConversationFavorite)
+
+            vm.toggleConversationFavorite()
+            assertTrue(awaitMatching { it.isConversationFavorite }.isConversationFavorite)
+            assertTrue(Fixtures.alex.id in settings.current.favoriteConversationIds)
+
+            vm.toggleConversationFavorite()
+            assertFalse(awaitMatching { !it.isConversationFavorite }.isConversationFavorite)
+            assertFalse(Fixtures.alex.id in settings.current.favoriteConversationIds)
+        }
+    }
+
+    @Test
     fun deleteConversationEmitsEvent() = runTest {
         val vm = ConversationViewModel(Fixtures.team.id, vault, ZoneOffset.UTC)
         vm.events.test {
@@ -104,6 +128,25 @@ class ConversationAndDetailViewModelTest {
             assertEquals(listOf(2L), awaitMatching { !it.loading }.messages.map { it.id })
             vm.removeFavorite(2)
             assertTrue(awaitMatching { it.messages.isEmpty() }.messages.isEmpty())
+        }
+    }
+
+    @Test
+    fun favoritesConversationTabAndRemove() = runTest {
+        val settings = InMemorySettingsRepository()
+        settings.update { it.copy(favoriteConversationIds = setOf(Fixtures.alex.id)) }
+        val vm = FavoritesViewModel(vault, settings)
+        vm.state.testState {
+            val initial = awaitMatching { !it.loading }
+            assertEquals(FavoritesTab.CONVERSATIONS, initial.selectedTab)
+            assertEquals(listOf(Fixtures.alex.id), initial.conversations.map { it.id })
+
+            vm.selectTab(FavoritesTab.MESSAGES)
+            assertEquals(FavoritesTab.MESSAGES, awaitMatching { it.selectedTab == FavoritesTab.MESSAGES }.selectedTab)
+
+            vm.removeFavoriteConversation(Fixtures.alex.id)
+            assertTrue(awaitMatching { it.conversations.isEmpty() }.conversations.isEmpty())
+            assertFalse(Fixtures.alex.id in settings.current.favoriteConversationIds)
         }
     }
 

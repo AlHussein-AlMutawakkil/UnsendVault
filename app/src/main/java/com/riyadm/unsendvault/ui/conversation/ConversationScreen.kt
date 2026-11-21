@@ -58,6 +58,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -268,6 +269,7 @@ fun ConversationRoute(
         onCustomCoverTextChange = viewModel::setCustomCoverText,
         onSetConversationKey = viewModel::setConversationKey,
         onGenerateStrongKey = viewModel::generateStrongKey,
+        onToggleConversationFavorite = viewModel::toggleConversationFavorite,
     )
 }
 
@@ -293,6 +295,7 @@ fun ConversationScreen(
     onCustomCoverTextChange: (String) -> Unit = {},
     onSetConversationKey: (String?) -> Unit = {},
     onGenerateStrongKey: () -> String = { "" },
+    onToggleConversationFavorite: () -> Unit = {},
 ) {
     val formatter = rememberTimeFormatter()
     var confirmDeleteSelected by rememberSaveable { mutableStateOf(false) }
@@ -382,24 +385,25 @@ fun ConversationScreen(
                     },
                     navigationIcon = { if (onBack != null) BackButton(onBack) },
                     actions = {
-                        IconButton(onClick = { showKeyDialog = true }) {
-                            Icon(
-                                imageVector = if (state.encryptionMode != EncryptionMode.NONE) Icons.Filled.Lock else Icons.Outlined.Lock,
-                                contentDescription = "إعدادات تشفير المحادثة",
-                                tint = if (state.hasPrivateKey) {
-                                    MaterialTheme.colorScheme.primary
-                                } else if (state.globalKey.isNotBlank()) {
-                                    MaterialTheme.colorScheme.onSurface
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                                },
-                            )
-                        }
                         Box {
                             IconButton(onClick = { menuOpen = true }) {
                                 Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.cd_more_options))
                             }
                             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                                DropdownMenuItem(
+                                    text = { Text(if (state.isConversationFavorite) "إزالة من المفضلة" else "إضافة إلى المفضلة") },
+                                    leadingIcon = {
+                                        Icon(
+                                            if (state.isConversationFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                                            contentDescription = null,
+                                            tint = if (state.isConversationFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    },
+                                    onClick = {
+                                        menuOpen = false
+                                        onToggleConversationFavorite()
+                                    },
+                                )
                                 DropdownMenuItem(
                                     text = { Text("إعدادات التشفير والمفتاح") },
                                     leadingIcon = { Icon(Icons.Outlined.Key, contentDescription = null) },
@@ -1223,7 +1227,7 @@ private fun WimLowReplyBar(
                             DropdownMenuItem(
                                 text = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text("بدون تشفير")
+                                        Text("بدون")
                                         if (encryptionMode == EncryptionMode.NONE) {
                                             Spacer(Modifier.width(8.dp))
                                             Icon(Icons.Filled.Done, contentDescription = null, modifier = Modifier.size(16.dp), tint = colors.primary)
@@ -1239,7 +1243,7 @@ private fun WimLowReplyBar(
                             DropdownMenuItem(
                                 text = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text("تشفير صريح")
+                                        Text("تشفير")
                                         if (encryptionMode == EncryptionMode.EXPLICIT) {
                                             Spacer(Modifier.width(8.dp))
                                             Icon(Icons.Filled.Done, contentDescription = null, modifier = Modifier.size(16.dp), tint = colors.primary)
@@ -1255,7 +1259,7 @@ private fun WimLowReplyBar(
                             DropdownMenuItem(
                                 text = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text("تشفير مموّه")
+                                        Text("مموه")
                                         if (encryptionMode == EncryptionMode.STEGANO) {
                                             Spacer(Modifier.width(8.dp))
                                             Icon(Icons.Filled.Done, contentDescription = null, modifier = Modifier.size(16.dp), tint = colors.primary)
@@ -1281,14 +1285,6 @@ private fun WimLowReplyBar(
                                 onClick = {
                                     encryptionMenuOpen = false
                                     onSetConversationEncryptionMode(encryptionMode)
-                                },
-                            )
-                            DropdownMenuItem(
-                                text = { Text("إعدادات المفتاح...") },
-                                leadingIcon = { Icon(Icons.Outlined.Key, contentDescription = null) },
-                                onClick = {
-                                    encryptionMenuOpen = false
-                                    onOpenKeyDialog()
                                 },
                             )
                         }
