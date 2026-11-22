@@ -270,6 +270,7 @@ fun ConversationRoute(
         onSetConversationKey = viewModel::setConversationKey,
         onGenerateStrongKey = viewModel::generateStrongKey,
         onToggleConversationFavorite = viewModel::toggleConversationFavorite,
+        onCycleEncryptionMode = viewModel::cycleEncryptionMode,
     )
 }
 
@@ -296,6 +297,7 @@ fun ConversationScreen(
     onSetConversationKey: (String?) -> Unit = {},
     onGenerateStrongKey: () -> String = { "" },
     onToggleConversationFavorite: () -> Unit = {},
+    onCycleEncryptionMode: () -> Unit = {},
 ) {
     val formatter = rememberTimeFormatter()
     var confirmDeleteSelected by rememberSaveable { mutableStateOf(false) }
@@ -405,7 +407,7 @@ fun ConversationScreen(
                                     },
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("إعدادات التشفير والمفتاح") },
+                                    text = { Text("إعداد التشفير") },
                                     leadingIcon = { Icon(Icons.Outlined.Key, contentDescription = null) },
                                     onClick = {
                                         menuOpen = false
@@ -481,6 +483,7 @@ fun ConversationScreen(
                     onOpenKeyDialog = { showKeyDialog = true },
                     onOpenSourceApp = onOpenSourceApp,
                     appIcon = appIcon,
+                    onCycleEncryptionMode = onCycleEncryptionMode,
                 )
             }
         }
@@ -1047,6 +1050,7 @@ private fun DrawableImage(
  * - Rounded capsule pill text box with Lock button replacing the sticker/emoji icon.
  * - Lock button enables/disables encryption or selects explicit/steganographic modes.
  */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun WimLowReplyBar(
     appLabel: String,
@@ -1065,6 +1069,7 @@ private fun WimLowReplyBar(
     onOpenKeyDialog: () -> Unit,
     onOpenSourceApp: (() -> Unit)?,
     appIcon: Drawable?,
+    onCycleEncryptionMode: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
     var quickMenuOpen by remember { mutableStateOf(false) }
@@ -1099,16 +1104,6 @@ private fun WimLowReplyBar(
                         },
                     )
                 }
-                QuickActionPill(
-                    label = "إعدادات التشفير",
-                    icon = {
-                        Icon(Icons.Outlined.Key, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                    },
-                    onClick = {
-                        quickMenuOpen = false
-                        onOpenKeyDialog()
-                    },
-                )
             }
         }
 
@@ -1200,17 +1195,25 @@ private fun WimLowReplyBar(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
                 ) {
-                    // Lock button inside the capsule (replacing the sticker/emoji icon)
+                    // Encryption mode button inside the capsule
                     Box {
-                        IconButton(
-                            onClick = {
-                                encryptionMenuOpen = true
-                            },
-                            modifier = Modifier.size(38.dp),
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(CircleShape)
+                                .combinedClickable(
+                                    onClick = onCycleEncryptionMode,
+                                    onLongClick = { encryptionMenuOpen = true },
+                                ),
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
-                                imageVector = if (encryptionMode != EncryptionMode.NONE) Icons.Filled.Lock else Icons.Outlined.LockOpen,
-                                contentDescription = "تفعيل / إلغاء التشفير",
+                                imageVector = when (encryptionMode) {
+                                    EncryptionMode.NONE -> CryptoIcons.RemoveModerator
+                                    EncryptionMode.EXPLICIT -> CryptoIcons.ShieldLock
+                                    EncryptionMode.STEGANO -> CryptoIcons.VerifiedUser
+                                },
+                                contentDescription = "وضع التشفير (انقر للتبديل، اضغط مطولاً للخيارات)",
                                 tint = if (encryptionMode != EncryptionMode.NONE) {
                                     Color(0xFF00A2FF)
                                 } else {
@@ -1234,7 +1237,7 @@ private fun WimLowReplyBar(
                                         }
                                     }
                                 },
-                                leadingIcon = { Icon(Icons.Outlined.LockOpen, contentDescription = null) },
+                                leadingIcon = { Icon(CryptoIcons.RemoveModerator, contentDescription = null) },
                                 onClick = {
                                     encryptionMenuOpen = false
                                     onSetEncryptionMode(EncryptionMode.NONE)
@@ -1250,7 +1253,7 @@ private fun WimLowReplyBar(
                                         }
                                     }
                                 },
-                                leadingIcon = { Icon(Icons.Outlined.Lock, contentDescription = null) },
+                                leadingIcon = { Icon(CryptoIcons.ShieldLock, contentDescription = null) },
                                 onClick = {
                                     encryptionMenuOpen = false
                                     onSetEncryptionMode(EncryptionMode.EXPLICIT)
@@ -1266,25 +1269,10 @@ private fun WimLowReplyBar(
                                         }
                                     }
                                 },
-                                leadingIcon = { Icon(Icons.Filled.AutoFixHigh, contentDescription = null) },
+                                leadingIcon = { Icon(CryptoIcons.VerifiedUser, contentDescription = null) },
                                 onClick = {
                                     encryptionMenuOpen = false
                                     onSetEncryptionMode(EncryptionMode.STEGANO)
-                                },
-                            )
-                            HorizontalDivider()
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = if (conversationEncryptionMode == encryptionMode) "مثبّت كافتراضي لهذه الجهة ✓" else "تثبيت هذا الوضع كافتراضي للمحادثة",
-                                        color = colors.primary,
-                                        fontWeight = FontWeight.Medium,
-                                    )
-                                },
-                                leadingIcon = { Icon(Icons.Outlined.Shield, contentDescription = null, tint = colors.primary) },
-                                onClick = {
-                                    encryptionMenuOpen = false
-                                    onSetConversationEncryptionMode(encryptionMode)
                                 },
                             )
                         }

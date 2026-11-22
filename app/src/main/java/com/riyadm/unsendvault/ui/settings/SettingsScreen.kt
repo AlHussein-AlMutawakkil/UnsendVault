@@ -495,8 +495,6 @@ fun SettingsScreen(
                     modifier = Modifier.testTag(SettingsTestTags.DELETE_ALL),
                 )
 
-                UpdateSettingsSection()
-
                 // Help
                 SectionHeader(stringResource(R.string.settings_section_help))
                 ValueRow(
@@ -511,17 +509,6 @@ fun SettingsScreen(
                     icon = Icons.AutoMirrored.Outlined.Article,
                     onClick = onOpenAbout,
                 )
-
-                if (showDeveloperOptions) {
-                    SectionHeader(stringResource(R.string.settings_section_developer))
-                    ValueRow(
-                        title = stringResource(R.string.settings_demo_data),
-                        value = stringResource(R.string.settings_demo_data_summary),
-                        icon = Icons.Outlined.BugReport,
-                        enabled = !state.busy,
-                        onClick = viewModel::insertDemoData,
-                    )
-                }
                 Spacer(Modifier.padding(bottom = 24.dp))
             }
         }
