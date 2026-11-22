@@ -7,6 +7,7 @@ import com.riyadm.unsendvault.capture.SnapshotMessage
 import com.riyadm.unsendvault.capture.adapter.KnownApps
 import com.riyadm.unsendvault.capture.filter.SystemRedaction
 import com.riyadm.unsendvault.core.model.ContentKind
+import com.riyadm.unsendvault.crypto.message.SteganographyEngine
 
 /**
  * App-agnostic notification parser. Per-app adapters subclass it and override the small hooks ([parseTitle],
@@ -109,7 +110,8 @@ open class GenericNotificationParser(protected val placeholders: CapturePlacehol
             val sender = if (isSelf(rawSender)) placeholders.selfSender else rawSender
             val precise = m.timestamp > 0
             val timestamp = if (precise) m.timestamp else fallbackTimestamp(s)
-            val raw = m.text?.let { TextRules.stripInvisible(it).trim() }
+            val isSteg = m.text?.let { SteganographyEngine.containsStegano(it) } == true
+            val raw = m.text?.let { if (isSteg) it else TextRules.stripInvisible(it).trim() }
             val text: String
             val kind: ContentKind
             when {
@@ -122,11 +124,15 @@ open class GenericNotificationParser(protected val placeholders: CapturePlacehol
                     text = placeholders.systemRedacted; kind = ContentKind.SYSTEM_REDACTED
                 }
                 else -> {
-                    var body = TextRules.clampBody(cleanBody(raw).trim())
+                    var body = if (isSteg) TextRules.clampBody(raw) else TextRules.clampBody(cleanBody(raw).trim())
                     // If this notification contains only 1 message, check if bigText has a longer version
                     if (merged.size == 1) {
-                        val big = s.bigText?.let { TextRules.clampBody(cleanBody(it).trim()) }
+                        val bigIsSteg = s.bigText?.let { SteganographyEngine.containsStegano(it) } == true
+                        val big = s.bigText?.let {
+                            if (bigIsSteg) TextRules.clampBody(it) else TextRules.clampBody(cleanBody(it).trim())
+                        }
                         if (!big.isNullOrEmpty() && big.length > body.length &&
+                            (!isSteg || bigIsSteg) &&
                             (big.startsWith(body.take(minOf(15, body.length))) || body.startsWith(big.take(minOf(15, big.length))))
                         ) {
                             body = big
@@ -186,7 +192,8 @@ open class GenericNotificationParser(protected val placeholders: CapturePlacehol
         val markers = ArrayList<DeletionMarker>()
         var noise = 0
         for (line in lines) {
-            val raw = TextRules.stripInvisible(line).trim()
+            val lineIsSteg = SteganographyEngine.containsStegano(line)
+            val raw = if (lineIsSteg) line else TextRules.stripInvisible(line).trim()
             var sender = titleInfo.sender
             val text: String
             val kind: ContentKind
@@ -194,11 +201,14 @@ open class GenericNotificationParser(protected val placeholders: CapturePlacehol
                 text = placeholders.systemRedacted
                 kind = ContentKind.SYSTEM_REDACTED
             } else {
-                var body = cleanBody(raw).trim()
+                var body = if (lineIsSteg) raw else cleanBody(raw).trim()
                 if (split) {
-                    TextRules.splitSenderPrefix(body)?.let { (name, rest) -> sender = name; body = cleanBody(rest).trim() }
+                    TextRules.splitSenderPrefix(body)?.let { (name, rest) ->
+                        sender = name
+                        body = if (SteganographyEngine.containsStegano(rest)) rest else cleanBody(rest).trim()
+                    }
                 }
-                body = TextRules.clampBody(body)
+                body = if (SteganographyEngine.containsStegano(body)) body else TextRules.clampBody(body)
                 if (body.isEmpty()) continue
                 val conversationTitle = titleInfo.conversationTitle ?: sender
                 val knownNames = listOfNotNull(sender, conversationTitle)

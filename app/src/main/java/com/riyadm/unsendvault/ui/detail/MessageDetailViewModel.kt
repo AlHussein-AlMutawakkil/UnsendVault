@@ -44,7 +44,11 @@ class MessageDetailViewModel(
                 val text = detail.message.text
                 val isEnc = MessageCryptoEngine.isEncrypted(text)
                 if (isEnc) {
-                    val candidateKeys = keyManager?.getCandidateKeys(detail.message.conversationTitle) ?: emptyList()
+                    val msg = detail.message
+                    val candidateKeys = listOfNotNull(
+                        keyManager?.getConversationKey(msg.conversationTitle),
+                        keyManager?.getGlobalKey()?.takeIf { it.isNotBlank() },
+                    ).distinct()
                     val result = MessageCryptoEngine.decrypt(text, candidateKeys)
                     val isSteg = SteganographyEngine.containsStegano(text)
                     MessageDetailUiState(

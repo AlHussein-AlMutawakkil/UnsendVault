@@ -9,7 +9,7 @@ import java.util.Base64
 object ExplicitArmorEngine {
     private const val PREFIX = "[UV:enc:"
     private const val SUFFIX = "]"
-    private val REGEX = Regex("""(?:🔒\s*)?\[UV:enc:([A-Za-z0-9+/=_\-]+)\]""")
+    private val REGEX = Regex("""(?:🔒\s*)?\[UV:enc:([A-Za-z0-9+/=_\-\s]+)\]""", setOf(RegexOption.DOT_MATCHES_ALL))
 
     fun wrap(payload: ByteArray): String {
         val b64 = Base64.getEncoder().encodeToString(payload)
@@ -22,7 +22,7 @@ object ExplicitArmorEngine {
 
     fun unwrap(text: String): ByteArray? {
         val match = REGEX.find(text) ?: return null
-        val b64 = match.groupValues[1]
+        val b64 = match.groupValues[1].filterNot { it.isWhitespace() }
         return try {
             Base64.getDecoder().decode(b64)
         } catch (_: Exception) {

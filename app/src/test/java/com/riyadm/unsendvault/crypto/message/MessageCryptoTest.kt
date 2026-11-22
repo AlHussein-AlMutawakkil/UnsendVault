@@ -48,6 +48,43 @@ class MessageCryptoTest {
         val unwrapped = ExplicitArmorEngine.unwrap(wrapped)
         assertNotNull(unwrapped)
         assertEquals(String(secretBytes), String(unwrapped!!))
+
+        // Multiline / wrapped text with spaces and newlines
+        val multilineWrapped = "🔒 [UV:enc:\n" + wrapped.removePrefix("[UV:enc:").removeSuffix("]") + "\n]"
+        assertTrue(ExplicitArmorEngine.isExplicitEncrypted(multilineWrapped))
+        val unwrappedMulti = ExplicitArmorEngine.unwrap(multilineWrapped)
+        assertNotNull(unwrappedMulti)
+        assertEquals(String(secretBytes), String(unwrappedMulti!!))
+    }
+
+    @Test
+    fun steganography_legacyBOMFallback() {
+        // Legacy BOM format with \uFEFF
+        val legacyPrefix = charArrayOf('\u200B', '\u200D', '\u200C', '\uFEFF').concatToString()
+        val payload = "LegacyHello".toByteArray()
+        val cover = "مرحبا بكم"
+        val sb = StringBuilder()
+        sb.append(cover)
+        sb.append(legacyPrefix)
+        for (b in payload) {
+            val v = b.toInt() and 0xFF
+            fun toC(bits: Int) = when (bits) {
+                0 -> '\u200B'
+                1 -> '\u200C'
+                2 -> '\u200D'
+                else -> '\uFEFF'
+            }
+            sb.append(toC((v ushr 6) and 0x03))
+            sb.append(toC((v ushr 4) and 0x03))
+            sb.append(toC((v ushr 2) and 0x03))
+            sb.append(toC(v and 0x03))
+        }
+        val encodedLegacy = sb.toString()
+        assertTrue(SteganographyEngine.containsStegano(encodedLegacy))
+        val decoded = SteganographyEngine.decode(encodedLegacy)
+        assertNotNull(decoded)
+        assertEquals("LegacyHello", String(decoded!!))
+        assertEquals(cover, SteganographyEngine.extractCoverText(encodedLegacy))
     }
 
     @Test

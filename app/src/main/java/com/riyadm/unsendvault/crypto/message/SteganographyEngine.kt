@@ -14,13 +14,22 @@ import kotlin.random.Random
  * - \uFEFF (Zero-width no-break)     -> 11
  */
 object SteganographyEngine {
-    private const val CHAR_00 = '\u200B'
-    private const val CHAR_01 = '\u200C'
-    private const val CHAR_10 = '\u200D'
-    private const val CHAR_11 = '\uFEFF'
+    private const val CHAR_00 = '\u200B' // Zero-Width Space
+    private const val CHAR_01 = '\u200C' // Zero-Width Non-Joiner (ZWNJ)
+    private const val CHAR_10 = '\u200D' // Zero-Width Joiner (ZWJ)
+    private const val CHAR_11 = '\u2060' // Word Joiner (WJ - standard non-BOM zero-width invisible)
+    private const val CHAR_11_LEGACY = '\uFEFF' // Zero-Width No-Break Space (BOM - fallback for legacy messages)
 
-    // Magic signature to unambiguously identify our steganographic payloads
-    private val MAGIC_PREFIX = charArrayOf(CHAR_00, CHAR_10, CHAR_01, CHAR_11).concatToString()
+    // Primary magic signature: uses ZWNJ and ZWJ which are NEVER stripped by messaging apps or Android
+    private val PRIMARY_MAGIC = charArrayOf('\u200C', '\u200D', '\u200C', '\u200D', '\u200B').concatToString()
+
+    // All known signatures to recognize new and legacy payloads
+    private val ALL_PREFIXES = listOf(
+        PRIMARY_MAGIC,
+        charArrayOf('\u200B', '\u200D', '\u200C', '\u2060').concatToString(),
+        charArrayOf('\u200B', '\u200D', '\u200C', '\uFEFF').concatToString(),
+        charArrayOf('\u200B', '\u200D', '\u200C').concatToString(),
+    )
 
     val DEFAULT_COVER_TEXTS = listOf(
         "تمام إن شاء الله",
@@ -42,7 +51,7 @@ object SteganographyEngine {
         val cleanCover = if (coverText.isBlank()) randomCoverText() else coverText.trim()
         val sb = StringBuilder()
         sb.append(cleanCover)
-        sb.append(MAGIC_PREFIX)
+        sb.append(PRIMARY_MAGIC)
 
         for (b in payload) {
             val v = b.toInt() and 0xFF
@@ -58,22 +67,22 @@ object SteganographyEngine {
      * Checks if the given text contains our zero-width steganographic payload.
      */
     fun containsStegano(text: String): Boolean {
-        return text.contains(MAGIC_PREFIX)
+        return ALL_PREFIXES.any { text.contains(it) }
     }
 
     /**
      * Extracts the hidden payload from text, or null if no valid payload is found.
      */
     fun decode(text: String): ByteArray? {
-        val idx = text.indexOf(MAGIC_PREFIX)
-        if (idx == -1) return null
-
-        val payloadChars = text.substring(idx + MAGIC_PREFIX.length)
+        val prefix = ALL_PREFIXES.firstOrNull { text.contains(it) } ?: return null
+        val idx = text.indexOf(prefix)
+        val payloadChars = text.substring(idx + prefix.length)
         val validChars = payloadChars.filter { isSteganoChar(it) }
-        if (validChars.isEmpty() || validChars.length % 4 != 0) return null
+        if (validChars.length < 4) return null
 
-        val out = ByteArrayOutputStream(validChars.length / 4)
-        for (i in validChars.indices step 4) {
+        val count = validChars.length - (validChars.length % 4)
+        val out = ByteArrayOutputStream(count / 4)
+        for (i in 0 until count step 4) {
             val b0 = toBits(validChars[i]) ?: return null
             val b1 = toBits(validChars[i + 1]) ?: return null
             val b2 = toBits(validChars[i + 2]) ?: return null
@@ -88,13 +97,13 @@ object SteganographyEngine {
      * Extracts the visible cover text, stripping the hidden payload.
      */
     fun extractCoverText(text: String): String {
-        val idx = text.indexOf(MAGIC_PREFIX)
-        val visiblePart = if (idx != -1) text.substring(0, idx) else text
+        val prefix = ALL_PREFIXES.firstOrNull { text.contains(it) }
+        val visiblePart = if (prefix != null) text.substring(0, text.indexOf(prefix)) else text
         return visiblePart.filterNot { isSteganoChar(it) }.trim()
     }
 
     private fun isSteganoChar(c: Char): Boolean =
-        c == CHAR_00 || c == CHAR_01 || c == CHAR_10 || c == CHAR_11
+        c == CHAR_00 || c == CHAR_01 || c == CHAR_10 || c == CHAR_11 || c == CHAR_11_LEGACY
 
     private fun toChar(bits: Int): Char = when (bits) {
         0 -> CHAR_00
@@ -108,7 +117,7 @@ object SteganographyEngine {
         CHAR_00 -> 0
         CHAR_01 -> 1
         CHAR_10 -> 2
-        CHAR_11 -> 3
+        CHAR_11, CHAR_11_LEGACY -> 3
         else -> null
     }
 }

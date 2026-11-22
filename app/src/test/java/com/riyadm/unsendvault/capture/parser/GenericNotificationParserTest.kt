@@ -9,6 +9,7 @@ import com.riyadm.unsendvault.capture.adapter.GenericAdapter
 import com.riyadm.unsendvault.core.model.ContentKind
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -256,5 +257,18 @@ class GenericNotificationParserTest {
         val m = messages(snapshot(title = "Alex Rivera", postTime = T0 + 5, messages = listOf(msg("Alex Rivera", "hi", 0)))).single()
         assertEquals(T0 + 5, m.messageTimestamp)
         assertFalse(m.hasPreciseTimestamp)
+    }
+
+    @Test
+    fun steganographicMessagePreservesZeroWidthPayload() {
+        val payload = "SecretData".toByteArray()
+        val steganoText = com.riyadm.unsendvault.crypto.message.SteganographyEngine.encode(payload, "صباح الخير")
+        val out = messages(snapshot(title = "Alex Rivera", messages = listOf(msg("Alex Rivera", steganoText, T0))))
+        assertEquals(1, out.size)
+        val captured = out.single().text
+        assertTrue(com.riyadm.unsendvault.crypto.message.SteganographyEngine.containsStegano(captured))
+        val decoded = com.riyadm.unsendvault.crypto.message.SteganographyEngine.decode(captured)
+        assertNotNull(decoded)
+        assertEquals("SecretData", String(decoded!!))
     }
 }
